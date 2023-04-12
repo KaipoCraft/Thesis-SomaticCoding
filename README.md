@@ -1,23 +1,7 @@
 # Thesis-SomaticCoding
 
-## File Structure
-├─ env/
-|   ├─
-|   └─
-├─ gestures/
-|   ├─
-|   └─
-├─ markers/
-|   ├─
-|   └─
-├─ src/
-|   ├─ __init__.py
-|   ├─ camera.py
-|   └─ observer.py
-├─ tests/
-|   ├─
-|   └─
-├─ .gitignore
-├─ LICENSE
-├─ README.md
-└─ SomaticCoding.code-workspace
+## Setup
+1. Set up a python virtual environment in VSCode
+2. Enter the virtual environment using `env\Scripts\activate.bat`
+
+## Repo Structure

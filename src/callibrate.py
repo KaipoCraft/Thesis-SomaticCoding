@@ -6,7 +6,7 @@ import os
 import time
 
 class Callibrator:
-    def __init__(self, camera, num_images=20, chessboard_size=(9, 6), image_sie=(640, 480)):
+    def __init__(self, camera, num_images=20, chessboard_size=(9, 6), image_size=(640, 480)):
         """
         This class is used to callibrate the camera matrix and distortion coefficients
         :param camera: The camera to callibrate (which is usually 0)
@@ -22,7 +22,19 @@ class Callibrator:
         self.dist_coeffs = []
         self.num_images = num_images
         self.chessboard_size = chessboard_size
+        self.image_size = image_size
+        self.folder_path = os.getcwd()
     
+    def get_matrix(self):
+        if not os.path.exists(self.folder_path + '\\' + 'camera_calibration.npz'):
+            print("File does not yet exist, go to callibrate.py to create it")
+        else:
+            print("Loading camera matrix")
+            data = np.load(self.folder_path + '\\' + 'camera_calibration.npz')
+            self.folder_path = data['mtx']
+            self.dist_coeffs = data['dist']
+        return self.matrix, self.dist_coeffs
+
     def gatherImages(self):
         """
         This function is used to gather images to callibrate the camera
