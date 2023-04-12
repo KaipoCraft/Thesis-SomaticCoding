@@ -18,13 +18,3 @@ Numpy 1.24.2 should install automatically, but if not run:
 ## Repo Structure
 
 ## UML Class Diagram
-
-```
-@startuml firstDiagram
-
-Alice -> Bob: Hello
-Bob -> Alice: Hi!
-		
-@enduml
-```
-![](UML.svg)

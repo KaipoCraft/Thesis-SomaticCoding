@@ -10,6 +10,16 @@ import calibrate
 import observer
 import subject
 
+marker_dict = {
+    0: ("Hello", "string"),
+    1: ("Goodbye", "string"),
+    2: ("1", "int"),
+    3: ("2", "int"),
+    4: ("print", "function"),
+    5: ("concat", "function"),
+    6: ("add", "function"),
+}
+
 # Set the variables for the aruco markers
 aruco_dict = aruco.getPredefinedDictionary(aruco.DICT_6X6_50)
 parameters = aruco.DetectorParameters()

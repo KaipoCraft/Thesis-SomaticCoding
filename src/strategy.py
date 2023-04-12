@@ -1,5 +1,16 @@
 import numpy as np
 
+class FunctionHandler:
+    def __init__(self, strategy):
+        self.strategy = strategy
+
+    # Run the "execute" method of the strategy
+    def execute_strategy(self, center):
+        self.strategy.execute(center)
+
+#------------------------------------------------------------#
+
+# An abstract class for all behaviors, using the strategy pattern
 class FunctionBehavior:
     def __init__(self, function):
         self.function = function
