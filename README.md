@@ -20,7 +20,7 @@ Numpy 1.24.2 should install automatically, but if not run:
 ## UML Class Diagram
 
 ```plantuml
-@startuml
+@startuml UML
 class Car {
   - make: string
   - model: string
@@ -33,3 +33,5 @@ class Car {
   + set_year(year: int)
 }
 @enduml
+```
+![](UML.svg)
