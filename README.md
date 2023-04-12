@@ -19,19 +19,12 @@ Numpy 1.24.2 should install automatically, but if not run:
 
 ## UML Class Diagram
 
-```plantuml
-@startuml UML
-class Car {
-  - make: string
-  - model: string
-  - year: int
-  + get_make(): string
-  + get_model(): string
-  + get_year(): int
-  + set_make(make: string)
-  + set_model(model: string)
-  + set_year(year: int)
-}
+```
+@startuml firstDiagram
+
+Alice -> Bob: Hello
+Bob -> Alice: Hi!
+		
 @enduml
 ```
 ![](UML.svg)
