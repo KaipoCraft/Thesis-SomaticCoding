@@ -5,8 +5,8 @@ import cv2
 import os
 import time
 
-class Callibrator:
-    def __init__(self, camera, num_images=20, chessboard_size=(9, 6), image_size=(640, 480)):
+class Calibrator:
+    def __init__(self, camera, num_images=20, chessboard_size=(9, 6), image_size=(640, 480), file_name='camera_calibration'):
         """
         This class is used to callibrate the camera matrix and distortion coefficients
         :param camera: The camera to callibrate (which is usually 0)
@@ -14,9 +14,8 @@ class Callibrator:
         :param chessboard_size: The size of the chessboard (default is (9, 6))
         :param image_size: The size of the image (default is (640, 480))
         """
-        self.folder_name = "calibration_images"
         self.folder_path = os.getcwd()
-        self.destination_folder = self.folder_path + '\\' + self.folder_name
+        self.destination_folder = self.folder_path + '\\' + 'calibration\calibration_images'
         self.camera = camera
         self.matrix = []
         self.dist_coeffs = []
@@ -24,15 +23,17 @@ class Callibrator:
         self.chessboard_size = chessboard_size
         self.image_size = image_size
         self.folder_path = os.getcwd()
+        self.file_name = file_name
     
     def get_matrix(self):
-        if not os.path.exists(self.folder_path + '\\' + 'camera_calibration.npz'):
-            print("File does not yet exist, go to callibrate.py to create it")
+        if not os.path.exists(self.folder_path + '\\' + 'calibration' + '\\' + self.file_name + '.npz'):
+            print(f"File: {self.file_name}.npz does not yet exist, go to callibrate.py to create it")
+            print(self.folder_path + '\\' + self.file_name + '.npz')
         else:
-            print("Loading camera matrix")
-            data = np.load(self.folder_path + '\\' + 'camera_calibration.npz')
-            self.folder_path = data['mtx']
+            data = np.load(self.folder_path + '\\' + 'calibration' + '\\' + self.file_name + '.npz')
+            self.matrix = data['mtx']
             self.dist_coeffs = data['dist']
+            print("Camera matrix loaded")
         return self.matrix, self.dist_coeffs
 
     def gatherImages(self):
