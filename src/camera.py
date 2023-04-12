@@ -5,14 +5,18 @@ import numpy as np
 import time
 import os
 
-cap = cv2.VideoCapture(0)
+class Camera:
+    def __init__(self, matrix_path):
+        self.matrix = []
+        self.matrix_path = matrix_path
+        self.dist_coeffs = []
 
-try:
-    while True:
-        ret, frame = cap.read()
-        cv2.imshow('frame', frame)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-except KeyboardInterrupt:
-    cv2.destroyWindow('frame')
-    cap.release()
+    def get_matrix(self):
+        if not os.path.exists(self.matrix_path + '\\' + 'camera_calibration.npz'):
+            print("File does not yet exist, go to callibrate.py to create it")
+        else:
+            print("Loading camera matrix")
+            data = np.load(self.matrix_path + '\\' + 'camera_calibration.npz')
+            self.matrix = data['mtx']
+            self.dist_coeffs = data['dist']
+        return self.camera_matrix, self.dist_coeffs
