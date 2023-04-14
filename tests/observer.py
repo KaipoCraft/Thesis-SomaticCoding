@@ -40,7 +40,6 @@ class DataGestureObserver(GestureObserver):
         # if data marker is detected, add the data to the data variable
         # if self.marker_detected:
             # check which marker ids are detected
-            
 
 #------------------------------------------------------------#
 
