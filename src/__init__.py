@@ -51,9 +51,10 @@ try:
         if ids is not None:
             # Get the pose of the marker
             rvecs, tvecs, _objPoints = aruco.estimatePoseSingleMarkers(corners, marker_size, camera_matrix, dist_coeffs)
-
+            
             for i in range(len(ids)):
                 if ids[i] == 4:
+                    print(marker_dict[ids[i].item()][0])
                     _subject.update_center(corners[i])
                 # Draw the axis
                 frame_markers = cv2.drawFrameAxes(frame_markers, camera_matrix, dist_coeffs, rvecs[i], tvecs[i], 100)

@@ -11,10 +11,17 @@ class GestureObserver:
 
 #------------------------------------------------------------#
 
-class FunctionGestureObserver(GestureObserver):
+# Watches the cursor marker and calls a function when a gesture is detected
+class CursorGestureObserver(GestureObserver):
     def __init__(self, function):
         super().__init__()
         self.function = function
+
+    # Checks the shape of the cursor movement
+    def checkShape(self):
+        # establish a shape variable that will change based on the shape of the cursor movement
+        shape = None
+        # Reference other classes to check for shapes
         
     def update(self, center):
         super().update(center)
@@ -27,9 +34,17 @@ class DataGestureObserver(GestureObserver):
     def update(self, center):
         super().update(center)
 
+    def checkData(self):
+        # establish a data variable that will change based on the data of the markers detected
+        data = None
+        # if data marker is detected, add the data to the data variable
+        # if self.marker_detected:
+            # check which marker ids are detected
+            
+
 #------------------------------------------------------------#
 
-class CircleGestureObserver(FunctionGestureObserver):
+class CircleGestureObserver(CursorGestureObserver):
     def __init__(self, function):
         super().__init__(function)
         
@@ -50,7 +65,7 @@ class CircleGestureObserver(FunctionGestureObserver):
             else:
                 return False
 
-class TapGestureObserver(FunctionGestureObserver):
+class TapGestureObserver(CursorGestureObserver):
     def __init__(self, function):
         super().__init__(function)
         self.previous_center = None
@@ -62,7 +77,7 @@ class TapGestureObserver(FunctionGestureObserver):
         self.previous_center = center
         self.function(center)
     
-class SlideGestureObserver(FunctionGestureObserver):
+class SlideGestureObserver(CursorGestureObserver):
     def __init__(self, function):
         super().__init__(function)
         self.previous_center = None
