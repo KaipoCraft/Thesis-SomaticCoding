@@ -3,11 +3,11 @@ import numpy as np
 class Marker:
     def __init__(self, marker_id) -> None:
         self.marker_id = marker_id
-        self.marker_detected = True
         self.marker_observers = []
+        self.previous_centers = []
+        self.is_visible = False
 
     def update(self, marker):
-        self.marker_id = marker.marker_id
         self.marker_corners = marker.marker_corners
         self.marker_center = marker.marker_center
         self.marker_detected = marker.marker_detected
@@ -21,8 +21,7 @@ class Marker:
 class CursorMarker(Marker):
     def __init__(self, marker_id) -> None:
         super().__init__(marker_id)
-        self.marker_observers = []
-        self.radius_threshold = 10
+        self.cursor_observers = []
 
     def update(self, marker):
         super().update(marker)
@@ -41,8 +40,6 @@ class CursorMarker(Marker):
 class DataMarker(Marker):
     def __init__(self, marker_id) -> None:
         super().__init__(marker_id)
-        self.previous_centers = []
-        self.isVisible = False
 
     def update(self, marker):
         super().update(marker)
