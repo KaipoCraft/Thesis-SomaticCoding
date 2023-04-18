@@ -52,8 +52,10 @@ class MarkerFactory:
     def make_markers(self):
         markers = []
         for marker_id, data in self.marker_dict.items():
-            # print(str(marker_id) + ", " + str(data))
-            markers.append(DataMarker(marker_id, data))
+            if data == 'cursor':
+                markers.append(CursorMarker(marker_id, data))
+            else:
+                markers.append(DataMarker(marker_id, data))
         return markers
 
 #------------------------------------------------------------#
@@ -84,6 +86,7 @@ class DataMarker(Marker):
     def __init__(self, marker_id, data):
         super().__init__(marker_id, data)
         self.data = data
+        self.secondary_data = None
 
     def attach_observer(self, observer):
         super().attach_observer(observer)

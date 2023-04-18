@@ -3,8 +3,8 @@ from abc import ABC, abstractmethod
 # An abstract class that all gestures forms will inherit from
 class GestureCommand(ABC):
     @abstractmethod
-    def __init__(self, gesture) -> None:
-        self.gesture = gesture
+    def __init__(self, center_points) -> None:
+        self.center_points = center_points
 
     def processString():
         pass
@@ -21,24 +21,25 @@ class GestureBehavior(ABC):
 #------------------------------------------------------------#
 
 class Circle(GestureCommand):
-    def __init__(self, gesture) -> None:
-        super().__init__(gesture)
+    def __init__(self, center_points) -> None:
+        super().__init__(center_points)
 
     def processString(self):
+        # concatenate the visible strings of the present markers (leaving info that on each marker as "secondary data")
         return "Circle"
     
 #------------------------------------------------------------#
 
 class PrintBehavior(GestureBehavior):
-    def __init__(self, marker) -> None:
-        super().__init__(marker)
+    def __init__(self, center_points) -> None:
+        super().__init__(center_points)
 
     def execute(self):
         print(self.marker.get_data())
 
 #------------------------------------------------------------#
 
-class OperationsReciever:
+class OperationsReceiver:
     def __init__(self) -> None:
         self.gesture = None
 
