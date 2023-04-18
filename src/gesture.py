@@ -1,10 +1,10 @@
-import markers
+from abc import ABC, abstractmethod
+import command
 
-# A push and a pull obserrver
-class GestureObserver:
-    def __init__(self, marker_id, gesture_type) -> None:
-        self.marker_id = marker_id
-        self.gesture_type = gesture_type
+# A push and a pull observer
+class GestureObserver(ABC):
+    @abstractmethod
+    def __init__(self) -> None:
         self.gesture_observers = []
         self.gesture = None
 
@@ -20,3 +20,25 @@ class GestureObserver:
     # Push the data from the data marker
 
     # Record the gesture from the cursor marker
+
+# Command object to 
+class Executioner(GestureObserver):
+    def __init__(self) -> None:
+        super().__init__()
+        self.gesture = None
+
+    def update(self, marker):
+        super.update(marker)
+
+    def attach_observer(self, observer):
+        self.gesture_observers.append(observer)
+
+    def detach_observer(self, observer):
+        self.gesture_observers.remove(observer)
+
+    def notify_observers(self):
+        for observer in self.gesture_observers:
+            observer.update(self)
+
+    def execute(self):
+        self.gesture.execute()

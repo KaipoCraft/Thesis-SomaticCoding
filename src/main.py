@@ -20,7 +20,7 @@ class Main:
         # Instantiate the cursor marker upon initialization
         self.cursor = markers.CursorMarker(self.marker_dict[0][0], self.marker_dict[0][1])
         # Instantiate the data observers upon initialization
-        self.gesture_observer = gesture.CursorObserver()
+        self.gesture_observer = gesture.Executioner()
     
     def run_camera(self):
         cap = cv2.VideoCapture(self.camera)
@@ -89,10 +89,15 @@ class Main:
         # Create the marker factory
         marker_factory = markers.MarkerFactory(self.marker_dict)
         # Iterate through the marker dictionary
-        for marker in self.marker_dict:
-            # Create the marker
-            marker = marker_factory.create_marker(marker, self.marker_dict[marker])
-            # Add the marker to the list of instantiated markers
-            self.my_markers.append(marker)
-            print("Markers instantiated with following strings:")
-            print(marker.get_data())
+        self.my_markers = marker_factory.make_markers()
+        # Attach our observer to the markers
+        for marker in self.my_markers:
+            marker.attach_observer(self.gesture_observer)
+        
+        print("Following markers instantiated:")
+        for marker in self.my_markers:
+            print(str(marker.get_id()) + ": " + marker.get_data(), end=" || ")
+            if marker.marker_observers is not None:
+                print("Observer attached")
+            else:
+                print("No observer attached")

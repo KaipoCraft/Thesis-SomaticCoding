@@ -4,3 +4,10 @@ class Display:
 
     def update(self, marker):
         pass
+
+class CodeDisplay:
+    def __init__(self) -> None:
+        self.display = None
+
+    def update(self, marker):
+        pass
