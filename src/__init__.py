@@ -7,13 +7,13 @@ import calibrate
 import main
 
 marker_dict = {
-    0: ("Hello", "string"),
-    1: ("Goodbye", "string"),
-    2: ("1", "int"),
-    3: ("2", "int"),
-    4: ("print", "function"),
-    5: ("concat", "function"),
-    6: ("add", "function"),
+    0: ("Hello"),
+    1: ("Goodbye"),
+    2: ("How are you?"),
+    3: ("I'm fine, thank you"),
+    4: ("What's your name?"),
+    5: ("My name is"),
+    6: ("Nice to meet you"),
 }
 
 # Create the marker dictionary, which will be used to store the markers once they're visible
@@ -28,4 +28,5 @@ marker_size = 100
 camera_matrix, dist_coeffs = calibrate.Calibrator(0, file_name='camera_calibration_desktop').get_matrix()
 
 _main = main.Main(0, marker_dict, aruco_dict, parameters, marker_size, camera_matrix, dist_coeffs)
+_main.makeMarkers()
 _main.run_camera()

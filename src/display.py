@@ -1,6 +1,6 @@
 class Display:
     def __init__(self):
-        self.observers = []
+        self.display = None
 
-    def add_observer(self, observer):
-        self.observers.append(observer)
+    def update(self, marker):
+        pass
