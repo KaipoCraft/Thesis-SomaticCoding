@@ -22,20 +22,29 @@ class Marker(ABC):
         for observer in self.marker_observers:
             observer.update(self)
 
-    def update_marker(self, corners, center, ids):
+    def update_marker(self, corners, ids):
         self.marker_corners = corners
+        center = self.calculate_center(corners)
         self.marker_center = center
-        self.previous_centers.append(center)
+        
         if self.get_id in ids:
             self.is_visible = True
         else:
             self.is_visible = False
+
+    def calculate_center(self, corners):
+        # Get the center of the marker
+        center = np.mean(corners, axis=0)
+        return center
 
     def points_changed(self):
         self.notify_observers()
 
     def __str__(self) -> str:
         return f"Marker ID: {self.marker_id}, Marker Center: {self.marker_center}, Marker Corners: {self.marker_corners}"
+    
+    def get_center(self):
+        return self.marker_center
     
     def get_id(self):
         return self.marker_id
@@ -73,6 +82,16 @@ class CursorMarker(Marker):
         super().notify_observers()
     def get_data(self):
         return super().get_data()
+    def update_marker(self, corners, ids):
+        return super().update_marker(corners, ids)
+    def calculate_center(self, corners):
+        return super().calculate_center(corners)
+    def points_changed(self):
+        return super().points_changed()
+    def __str__(self) -> str:
+        return super().__str__()
+    def get_center(self):
+        return super().get_center()
 
     #TODO - Check for the cursor gesture
     def check_gesture():
@@ -96,3 +115,13 @@ class DataMarker(Marker):
         super().notify_observers()
     def get_data(self):
         return super().get_data()
+    def update_marker(self, corners, ids):
+        return super().update_marker(corners, ids)
+    def calculate_center(self, corners):
+        return super().calculate_center(corners)
+    def points_changed(self):
+        return super().points_changed()
+    def __str__(self) -> str:
+        return super().__str__()
+    def get_center(self):
+        return super().get_center()

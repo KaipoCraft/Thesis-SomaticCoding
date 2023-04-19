@@ -24,7 +24,8 @@ class Main:
         self.cursor = markers.CursorMarker(self.marker_dict[0][0], self.marker_dict[0][1])
         # Instantiate the data observers upon initialization
         self.gesture_observer = observer.Executioner()
-        self.board = board.Board(self.camera_dims[0], self.camera_dims[1])
+        # Instantiate the board upon initialization
+        self.board = None
     
     def run_camera(self):
         cap = cv2.VideoCapture(self.camera)
@@ -46,9 +47,7 @@ class Main:
                 image = aruco.drawDetectedMarkers(gray.copy(), corners, ids, borderColor=(255, 255, 255))
 
                 # Draw the grid
-                for cell in self.board.get_cells():
-                    for i in cell:
-                        image = i.draw_cell(image, (255, 255, 255))
+                image = self.board.draw_board(image)
 
                 # If we have detected a marker
                 if ids is not None:
@@ -67,34 +66,17 @@ class Main:
         # Get the pose of the marker
         rvecs, tvecs, _objPoints = aruco.estimatePoseSingleMarkers(corners, self.marker_size, self.camera_matrix, self.dist_coeffs)
 
-        # print(int(self.my_markers[4].get_id()))
-        # print(ids)
+        # Iterate through the detected markers
+        for i in range(len(ids)):
+            # Get the id of the marker
+            id = ids[i][0]
 
-        # Go through visible ids and match them to the instantiated markers, updating them as visible
-        # for id in ids:
-            # print(self.my_markers[int(id)].get_id())
-            # self.my_markers[int(id)].update(corners, True)
+            # Update the marker's points and whether or not it has been detected
+            self.my_markers[id].update_marker(corners[i][0], ids)
 
-        for markers in self.my_markers:
-            if markers.get_id() in ids:
-                markers.update(corners, True)
-                print(markers.get_id())
-            else:
-                markers.update(corners, False)
-
-        # Iterate through the markers
-        # for i in range(len(ids)):
-            # print(self.my_markers[i].get_id())
-            # print(self.my_markers[i].get_id())
-            # image = cv2.drawFrameAxes(image, self.camera_matrix, self.dist_coeffs, rvecs[i], tvecs[i], 100)
-            # image = cv2.drawFrameAxes(image, self.camera_matrix, self.dist_coeffs, rvecs[int(self.my_markers[i].get_id())], tvecs[int(self.my_markers[i].get_id())], 100)
-        # Iterate through the markers
-        # for m in range(len(self.my_markers)):
-        #     image = cv2.drawFrameAxes(image, self.camera_matrix, self.dist_coeffs, rvecs[m], tvecs[m], 100)
-        # for i in range(len(ids)):
-        #     image = cv2.drawFrameAxes(image, self.camera_matrix, self.dist_coeffs, rvecs[i], tvecs[i], 100)
-
-        # Use the observer pattern to update the markers
+            # Checks each of the cells for the marker
+            for cell in self.board.get_cells():
+                cell.marker_check(self.my_markers[id])
 
         return image
     
@@ -120,18 +102,6 @@ class Main:
             else:
                 print("No observer attached")
 
-# class BoardFactory:
-#     def __init__(self, frame_size, board_size=(5, 5)) -> None:
-#         self.frame_size = frame_size
-#         self.board_size = board_size
-#         self.cell_height = self.frame_size[1] / self.board_size[1]
-#         self.cell_width = self.frame_size[0] / self.board_size[0]
-
-#     def make_board(self, image):
-#         for i in range(self.board_size[0]):
-#             y = i * self.cell_height
-#             cv2.line(image, (0, int(y)), (self.frame_size[0], int(y)), (255, 255, 255), 1)
-#         for j in range(self.board_size[1]):
-#             x = j * self.cell_width
-#             cv2.line(image, (int(x), 0), (int(x), self.frame_size[1]), (255, 255, 255), 1)
-#         return image
+    def make_board(self):
+        board_factory = board.BoardFactory(self.camera_dims[0], self.camera_dims[1], self.grid_size)
+        self.board = board_factory.make_board()

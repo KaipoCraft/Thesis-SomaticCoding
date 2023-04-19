@@ -17,7 +17,15 @@ marker_dict = {
     4: ("What's your name?"),
     5: ("My name is"),
     6: ("Nice to meet you"),
-    7: ("cursor")
+    7: ("cursor"),
+    8: ("click"),
+    9: ("scroll"),
+    10: ("zoom"),
+    11: ("drag"),
+    12: ("drop"),
+    13: ("select"),
+    14: ("deselect"),
+    15: ("undo"),
 }
 
 # Create the marker dictionary, which will be used to store the markers once they're visible
@@ -35,6 +43,7 @@ camera_matrix, dist_coeffs = calibrate.Calibrator(0, file_name='camera_calibrati
 
 # Create the main object and generate the markers
 _main = main.Main(0, camera_dims, grid_size, marker_dict, aruco_dict, parameters, marker_size, camera_matrix, dist_coeffs)
+_main.make_board()
 _main.make_markers()
 
 # Main loop
