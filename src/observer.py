@@ -1,7 +1,8 @@
 import interpreter
+import singleton
 
 # The all knowing object that will execute the function associated with a gesture, and notify the display
-class Executioner():
+class Executioner(metaclass=singleton.SingletonMeta):
     def __init__(self) -> None:
         self.gestures = None
         self.active_data_markers = []

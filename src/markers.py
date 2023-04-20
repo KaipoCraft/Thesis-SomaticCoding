@@ -109,7 +109,6 @@ class CursorMarker(Marker):
     def update_marker(self, corners, ids):
         super().update_marker(corners, ids)
         self.build_history()
-        print(self.cell_history)
         self.notify_observers()
         return super().update_marker(corners, ids)
     
