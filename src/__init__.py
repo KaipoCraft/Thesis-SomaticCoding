@@ -25,7 +25,7 @@ marker_dict = {
     12: ("drop"),
     13: ("select"),
     14: ("deselect"),
-    15: ("undo"),
+    15: ("undo")
 }
 
 # Create the marker dictionary, which will be used to store the markers once they're visible
@@ -35,14 +35,14 @@ marker_dict = {
 aruco_dict = aruco.getPredefinedDictionary(aruco.DICT_6X6_50)
 parameters = aruco.DetectorParameters()
 marker_size = 100
-grid_size = (9, 6) # height, width
-camera_dims = (620, 480) # laptop = 620 x 480, webcam = 1920 x 1080
+grid_size = 5 # size of the grid
+primary_color = (245, 200, 25) # BGR
 
 # import the camera matrix and distortion coefficients
 camera_matrix, dist_coeffs = calibrate.Calibrator(0, file_name='camera_calibration_desktop').get_matrix()
 
 # Create the main object and generate the markers
-_main = main.Main(0, camera_dims, grid_size, marker_dict, aruco_dict, parameters, marker_size, camera_matrix, dist_coeffs)
+_main = main.Main(0, primary_color, grid_size, marker_dict, aruco_dict, parameters, marker_size, camera_matrix, dist_coeffs)
 _main.make_board()
 _main.make_markers()
 

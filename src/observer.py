@@ -1,53 +1,28 @@
-from abc import ABC, abstractmethod
-import command
-
-# A push and a pull observer
-class GestureObserver(ABC):
-    @abstractmethod
-    def __init__(self) -> None:
-        self.gesture_observers = []
-        self.center = None
-        self.previous_centers = []
-        self.gesture = None
-
-    # Find out what each marker is doing
-    def update(self, marker):
-        self.center = marker.marker_center
-        self.previous_centers.append(marker.marker_center)
-    
-    # Push the data from the data marker
-
-    # Record the gesture from the cursor marker
+import interpreter
 
 # The all knowing object that will execute the function associated with a gesture, and notify the display
-class Executioner(GestureObserver):
+class Executioner():
     def __init__(self) -> None:
-        super().__init__()
+        self.gestures = None
+        self.active_data_markers = []
 
     def update(self, marker):
-        super.update(marker)
+        if marker.is_cursor:
+            pass
+        else:
+            pass
+    
+    # def cell_update(self, cell):
+    #     pass
 
-    def attach_observer(self, observer):
-        self.gesture_observers.append(observer)
+    # Takes the detected gesture and executes the function associated with it
+    def execute(self, detected_gesture):
+        for gesture in self.gestures:
+            if gesture == detected_gesture:
+                gesture.execute()
 
-    def detach_observer(self, observer):
-        self.gesture_observers.remove(observer)
-
-    def notify_observers(self):
-        for observer in self.gesture_observers:
-            observer.update(self)
-
-    def execute(self):
-        self.gesture.execute()
-
-    def checkGesture(self):
-        # check the previous centers of each marker to see if it matches a gesture
-        # if it does, set the gesture to that gesture
-        # if it doesn't, set the gesture to None
-
-        #TODO make a gesture library to hold all the gestures
-        self.gesture = None
-
-class GestureLibrary:
-    def __init__(self) -> None:
-        self.gestures = []
+    # Checks for gestures by passing the cell history to the interpreter
+    def check_gesture(self, cell_history):
+        detected_gesture = interpreter.GestureInterpreter().check_for_gesture(cell_history)
+        if detected_gesture:
+            self.execute(detected_gesture)

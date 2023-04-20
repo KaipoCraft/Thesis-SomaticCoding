@@ -1,7 +1,8 @@
 import cv2
+import singleton
 
 class Cell:
-    def __init__(self, x, y, size):
+    def __init__(self, x, y, id, size):
         '''
         x: x coordinate of the cell
         y: y coordinate of the cell
@@ -10,91 +11,132 @@ class Cell:
         '''
         self.x = x
         self.y = y
+        self.id = id
         self.is_empty = True
         self.size = size
         self.marker = None
-        self.observers = []
+        # self.observers = []
+        self.neighbors = ((self.x-1, self.y), (self.x, self.y-1), (self.x+1, self.y), (self.x, self.y+1)) # Left, Top, Right, Bottom
 
-    def attach_observer(self, observer):
-        self.marker_observers.append(observer)
+    # def attach_observer(self, observer):
+    #     self.observers.append(observer)
+    # def detach_observer(self, observer):
+    #     self.observers.remove(observer)
+    # def notify_observers(self):
+    #     for observer in self.observers:
+    #         observer.cell_update(self)
 
-    def detach_observer(self, observer):
-        self.marker_observers.remove(observer)
-
-    def notify_observers(self):
-        for observer in self.observers:
-            observer.update(self)
-
-    def marker_check(self, marker):
+    def check_for_markers(self, marker):
+        '''
+        Check if the marker is in the cell
+        Params:
+            marker: the marker object that is being checked
+        '''
         if marker.marker_center[0] > self.x and marker.marker_center[0] < self.x + self.size[0] and marker.marker_center[1] > self.y and marker.marker_center[1] < self.y + self.size[1]:
             self.marker_detected(marker)
-        else:
+        elif self.marker != None:
             self.marker_removed()
 
     def marker_detected(self, marker):
-        self.marker = marker
+        '''
+        Run this if a marker is detected in the cell
+        Params:
+            marker: the marker object that is in the cell
+        '''
         self.is_empty = False
-        if self.observers:
-            self.notify_observers()
-
+        self.marker = marker
+        self.marker.set_current_cell(self.get_id())   # Set the marker's current cell to this cell
+        # self.notify_observers()         # Notify the observers with up to date info
+            
     def marker_removed(self):
+        '''
+        Run this if a marker is removed from the cell
+        Params:
+            marker: the marker object that has been removed from the cell
+        '''
         self.is_empty = True
+        self.marker.set_current_cell(None)   # Set the marker's current cell to None
         self.marker = None
-        self.notify_observers()
+        # self.notify_observers()         # Notify the observers with up to date info
         
     def draw_cell(self, image, color):
+        #TODO fix this, it seems to only want to draw one thicker rectangle at a time
         if self.is_empty:
-            image = cv2.rectangle(image, (int(self.x), int(self.y)), (int(self.x + self.size[0]), int(self.y + self.size[1])), color, 1)
+            border_thickness = 1
         else:
-            image = cv2.rectangle(image, (int(self.x), int(self.y)), (int(self.x + self.size[0]), int(self.y + self.size[1])), color, -1)
-        # cv2.rectangle(image, (int(self.x), int(self.y)), (int(self.x + self.size[0]), int(self.y + self.size[1])), color, 1)
+            border_thickness = 5
+        cv2.rectangle(image, (int(self.x), int(self.y)), (int(self.x + self.size[0]), int(self.y + self.size[1])), color, border_thickness)
+
+        # calculate the size of the text
+        text_size, _ = cv2.getTextSize(str(self.id), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 2)
+
+        # calculate the center of the bounding box of the text
+        text_x = int(self.x + self.size[0] // 2 - text_size[0] // 2)
+        text_y = int(self.y + self.size[1] // 2 + text_size[1] // 2)
+
+        # draw the text with the updated position
+        cv2.putText(image, str(self.id), (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2, cv2.LINE_AA)
+
+        # cv2.putText(image, str(self.id), (int(self.x + self.size[0]//2), int(self.y + self.size[1]//2)), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2, cv2.LINE_AA)
+        
         return image
     
     def get_marker(self):
         return self.marker
+    
+    def get_id(self):
+        return self.id
 
-class SingletonMeta(type):
-    _instances = {}
-
-    def __call__(cls, *args, **kwargs):
-        if cls not in cls._instances:
-            cls._instances[cls] = super().__call__(*args, **kwargs)
-        return cls._instances[cls]
-
-class Board(metaclass=SingletonMeta):
+class Board(metaclass=singleton.SingletonMeta):
     '''
-    width: width of the board
-    height: height of the board
     cells: list of cells that make up the board
     '''
     def __init__(self):
         self.cells = []
         
-    def draw_board(self, image):
+    def draw_board(self, image, color):
         # Draw the cells
         for cell in self.cells:
-            image = cell.draw_cell(image, (255, 255, 255))
+            cell.draw_cell(image, color)
         return image
+    
+    # def attach_cell_observers(self, observer):
+    #     for cell in self.cells:
+    #         cell.attach_observer(observer)
+    
+    def get_cell(self, id):
+        for cell in self.cells:
+            if cell.get_id() == id:
+                return cell
+        return None
 
     def get_cells(self):
         return self.cells
     
 class BoardFactory():
-    def __init__(self, width, height, grid_dims):
-        self.width = width
-        self.height = height
-        self.grid_dims = grid_dims
-        # 6:9 ratio
-
-    def make_board(self):
+    @staticmethod
+    def make_board(window_dims, grid_dims):
+        # version where grid_size is the number of squares in the grid on the shortest window dimension
+        width = window_dims[0]
+        height = window_dims[1]
         board = Board()
-        # Divide the board into the cells
-        # if we have the width and the number of cells, we divide the width by the number of cells
-        unit_width = self.width / self.grid_dims[0]
-        unit_height = self.height / self.grid_dims[1]
 
-        for i in range(self.grid_dims[0]):
-            for j in range(self.grid_dims[1]):
-                board.cells.append(Cell(i * unit_width, j * unit_height, (unit_width, unit_height)))
+        square_unit_size = min(width, height) // grid_dims
+        num_squares_height = int(height // square_unit_size)
+        num_squares_width = int(width // square_unit_size)
 
+        margin_x = (width - (num_squares_width * square_unit_size)) // 2
+        margin_y = (height - (num_squares_height * square_unit_size)) // 2
+
+        for i in range(num_squares_width):
+            for j in range(num_squares_height):
+                cell_x = i * square_unit_size + margin_x
+                cell_y = j * square_unit_size + margin_y
+                if cell_x > width:
+                    pass
+                elif cell_y > height:
+                    pass
+                else:
+                    id = f'{i},{j}'
+                    board.cells.append(Cell(cell_x, cell_y, id, (square_unit_size, square_unit_size)))
         return board

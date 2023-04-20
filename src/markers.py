@@ -1,48 +1,49 @@
 from abc import ABC, abstractmethod
 import numpy as np
+import cv2
 
 class Marker(ABC):
     @abstractmethod
     def __init__(self, marker_id, data) -> None:
+        '''
+        Params:
+            marker_id: The id of the marker
+            data: The data that the marker will send
+        '''
         self.marker_id = marker_id
         self.data = data
         self.marker_observers = []
-        self.previous_centers = []
-        self.marker_corners = None
         self.marker_center = None
         self.is_visible = False
+        self.is_cursor = False
+        self.current_cell = None
 
     def attach_observer(self, observer):
         self.marker_observers.append(observer)
-
     def detach_observer(self, observer):
         self.marker_observers.remove(observer)
-    
-    def notify_observers(self):
-        for observer in self.marker_observers:
-            observer.update(self)
 
     def update_marker(self, corners, ids):
-        self.marker_corners = corners
-        center = self.calculate_center(corners)
-        self.marker_center = center
-        
-        if self.get_id in ids:
-            self.is_visible = True
-        else:
-            self.is_visible = False
+        self.marker_center = self.calculate_center(corners)
+        for id in ids:
+            # print(int(id))
+            if self.get_id() == int(id):
+                self.is_visible = True
+            else:
+                self.is_visible = False
 
     def calculate_center(self, corners):
         # Get the center of the marker
         center = np.mean(corners, axis=0)
         return center
 
-    def points_changed(self):
-        self.notify_observers()
+    def draw_marker(self, image, color):
+        # Draw the center
+        radius = 10
+        cv2.circle(image, (int(self.marker_center[0]), int(self.marker_center[1])), radius, color, -1)
+        cv2.putText(image, str(self.data), (int(self.marker_center[0]) + radius, int(self.marker_center[1])), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2, cv2.LINE_AA)
+        return image
 
-    def __str__(self) -> str:
-        return f"Marker ID: {self.marker_id}, Marker Center: {self.marker_center}, Marker Corners: {self.marker_corners}"
-    
     def get_center(self):
         return self.marker_center
     
@@ -51,16 +52,19 @@ class Marker(ABC):
     
     def get_data(self):
         return self.data
+    
+    def set_current_cell(self, cell):
+        self.current_cell = cell
 
 #------------------------------------------------------------#
 
 class MarkerFactory:
-    def __init__(self, marker_dict) -> None:
-        self.marker_dict = marker_dict
+    def __init__(self, markers) -> None:
+        self.markers = markers
     
     def make_markers(self):
         markers = []
-        for marker_id, data in self.marker_dict.items():
+        for marker_id, data in self.markers.items():
             if data == 'cursor':
                 markers.append(CursorMarker(marker_id, data))
             else:
@@ -72,34 +76,53 @@ class MarkerFactory:
 class CursorMarker(Marker):
     def __init__(self, marker_id, data) -> None:
         super().__init__(marker_id, data)
-        self.cursor_observers = []
+        self.current_cell = None
+        self.previous_cell = None
+        self.cell_history = []
+        self.history_length = 10
+        self.is_cursor = True
 
     def attach_observer(self, observer):
         super().attach_observer(observer)
     def detach_observer(self, observer):
         super().detach_observer(observer)
-    def notify_observers(self):
-        super().notify_observers()
     def get_data(self):
         return super().get_data()
-    def update_marker(self, corners, ids):
-        return super().update_marker(corners, ids)
     def calculate_center(self, corners):
         return super().calculate_center(corners)
-    def points_changed(self):
-        return super().points_changed()
     def __str__(self) -> str:
         return super().__str__()
     def get_center(self):
         return super().get_center()
-
-    #TODO - Check for the cursor gesture
-    def check_gesture():
-        pass
+    def get_id(self):
+        return super().get_id()
+    def draw_marker(self, image, color):
+        return super().draw_marker(image, color)
+    def set_current_cell(self, cell):
+        super().set_current_cell(cell)
     
-    #TODO - Add the cursor gesture detection
-    def gesture_detected():
-        pass
+    # When something the Executioner wants to know about the cursor changes, notify the Executioner
+    def notify_observers(self):
+        for observer in self.marker_observers:
+            observer.check_gesture(self.cell_history)
+    
+    def update_marker(self, corners, ids):
+        super().update_marker(corners, ids)
+        self.build_history()
+        print(self.cell_history)
+        self.notify_observers()
+        return super().update_marker(corners, ids)
+    
+    def build_history(self):
+        if self.current_cell is None:
+            return
+        elif self.current_cell != self.previous_cell:
+            if len(self.cell_history) <= self.history_length:
+                self.cell_history.append(self.current_cell)
+            else:
+                self.cell_history.pop(0)
+                self.cell_history.append(self.current_cell)
+            self.previous_cell = self.current_cell
             
 class DataMarker(Marker):
     def __init__(self, marker_id, data):
@@ -111,17 +134,21 @@ class DataMarker(Marker):
         super().attach_observer(observer)
     def detach_observer(self, observer):
         super().detach_observer(observer)
-    def notify_observers(self):
-        super().notify_observers()
+    # def notify_observers(self):
+    #     super().notify_observers()
     def get_data(self):
         return super().get_data()
     def update_marker(self, corners, ids):
         return super().update_marker(corners, ids)
     def calculate_center(self, corners):
         return super().calculate_center(corners)
-    def points_changed(self):
-        return super().points_changed()
     def __str__(self) -> str:
         return super().__str__()
     def get_center(self):
         return super().get_center()
+    def get_id(self):
+        return super().get_id()
+    def draw_marker(self, image, color):
+        return super().draw_marker(image, color)
+    def set_current_cell(self, cell):
+        super().set_current_cell(cell)
