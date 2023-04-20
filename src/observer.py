@@ -6,12 +6,6 @@ class Executioner(metaclass=singleton.SingletonMeta):
     def __init__(self) -> None:
         self.gestures = None
         self.active_data_markers = []
-
-    def update(self, marker):
-        if marker.is_cursor:
-            pass
-        else:
-            pass
     
     # def cell_update(self, cell):
     #     pass
@@ -27,3 +21,5 @@ class Executioner(metaclass=singleton.SingletonMeta):
         detected_gesture = interpreter.GestureInterpreter().check_for_gesture(cell_history)
         if detected_gesture:
             self.execute(detected_gesture)
+        else:
+            print("No gesture detected")

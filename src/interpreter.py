@@ -7,5 +7,9 @@ class GestureInterpreter:
     
     def check_for_gesture(self, cell_history):
         for gesture in self.gestures:
-            if gesture.analyze(cell_history):
+            if self.analyze(cell_history):
                 return gesture
+            
+    def analyze(self, cell_history):
+        # Compare the cell history to the gesture
+        return True

@@ -1,12 +1,13 @@
 # This is the main script that will run the program.
 
 # Import the external depencdecies
-import cv2
 from cv2 import aruco
+import sys
 
 # Import the necessary local scripts
-import calibrate
-import main
+import loop
+sys.path.insert(0, '..\calibration')
+import calibration.calibrate
 
 # Create the marker dictionary, which defines the string each marker corresponds to
 marker_dict = {
@@ -39,12 +40,13 @@ grid_size = 5 # size of the grid
 primary_color = (245, 200, 25) # BGR
 
 # import the camera matrix and distortion coefficients
-camera_matrix, dist_coeffs = calibrate.Calibrator(0, file_name='camera_calibration_desktop').get_matrix()
+camera_matrix, dist_coeffs = calibration.calibrate.Calibrator(0, file_name='camera_calibration_desktop').get_matrix()
 
 # Create the main object and generate the markers
-_main = main.Main(0, primary_color, grid_size, marker_dict, aruco_dict, parameters, marker_size, camera_matrix, dist_coeffs)
-_main.make_board()
-_main.make_markers()
+mainLoop = loop.Loop(0, primary_color, grid_size, marker_dict, aruco_dict, parameters, marker_size, camera_matrix, dist_coeffs)
+mainLoop.set_feed_dims()
+mainLoop.make_board()
+mainLoop.make_markers()
 
 # Main loop
-_main.run_camera()
+mainLoop.run_camera()

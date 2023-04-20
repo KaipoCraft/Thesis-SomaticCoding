@@ -8,7 +8,7 @@ import observer
 import board
 import singleton
 
-class Main(metaclass=singleton.SingletonMeta):
+class Loop(metaclass=singleton.SingletonMeta):
     def __init__(self, camera: int, primary_color: list, grid_size: tuple, marker_dict: dict, aruco_dict: object, params: object, marker_size: int, camera_matrix: object, dist_coeffs: object):
         '''
         Params:
@@ -47,17 +47,15 @@ class Main(metaclass=singleton.SingletonMeta):
         Runs the camera
         '''
         cap = cv2.VideoCapture(self.camera)
+
+        cap.set(cv2.CAP_PROP_FRAME_WIDTH, self.window_size[0])
+        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, self.window_size[1])
         
         # Create a window
         cv2.namedWindow("My Window", cv2.WINDOW_NORMAL)
 
         # Set the window to a normal state
-        cv2.setWindowProperty("My Window", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
-
-        self.window_size = screeninfo.get_monitors()[0].width, screeninfo.get_monitors()[0].height
-        
-        cap.set(cv2.CAP_PROP_FRAME_WIDTH, self.window_size[0])
-        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, self.window_size[1])
+        cv2.setWindowProperty("My Window", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)        
 
         try:
             while True:
@@ -118,10 +116,8 @@ class Main(metaclass=singleton.SingletonMeta):
         '''
         Make the markers via the MarkerFactory and attach the observer to them
         '''
-        # Create the marker factory
-        marker_factory = markers.MarkerFactory(self.marker_dict)
-        # Iterate through the marker dictionary
-        self.my_markers = marker_factory.make_markers()
+        # Iterate through the marker dictionary and make each marker object based on the dictionary
+        self.my_markers = markers.MarkerFactory.make_markers(self.marker_dict)
         # Attach our observer to the markers
         for marker in self.my_markers:
             marker.attach_observer(self.gesture_observer)
@@ -135,13 +131,15 @@ class Main(metaclass=singleton.SingletonMeta):
         self.board = board.BoardFactory.make_board(self.window_size, self.grid_size)
         # self.board.attach_cell_observers(self.gesture_observer)
 
-    def get_window_dims(self, screen):
+    def set_feed_dims(self):
         '''
-        Get the dimensions of the screen
-        Params:
-            screen: the screen to get the dimensions of
-        Returns:
-            width: the width of the screen
-            height: the height of the screen
+        Get the window dimensions
         '''
-        return screen.width, screen.height
+        screen_size = (screeninfo.get_monitors()[0].width, screeninfo.get_monitors()[0].height)
+        
+        if self.window_size[0] > 1280 or self.window_size[1] > 720:
+            self.window_size = (1280, 720)
+        else:
+            self.window_size = screen_size
+
+        return self.window_size

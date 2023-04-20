@@ -58,18 +58,16 @@ class Marker(ABC):
 
 #------------------------------------------------------------#
 
-class MarkerFactory:
-    def __init__(self, markers) -> None:
-        self.markers = markers
-    
-    def make_markers(self):
-        markers = []
-        for marker_id, data in self.markers.items():
+class MarkerFactory:    
+    @staticmethod
+    def make_markers(markers):
+        marker_list = []
+        for marker_id, data in markers.items():
             if data == 'cursor':
-                markers.append(CursorMarker(marker_id, data))
+                marker_list.append(CursorMarker(marker_id, data))
             else:
-                markers.append(DataMarker(marker_id, data))
-        return markers
+                marker_list.append(DataMarker(marker_id, data))
+        return marker_list
 
 #------------------------------------------------------------#
 
@@ -112,7 +110,17 @@ class CursorMarker(Marker):
         self.notify_observers()
         return super().update_marker(corners, ids)
     
+    # def build_history(self):
+    #     if self.current_cell is None:
+    #         return
+    #     elif self.current_cell != self.previous_cell:
+    #         # Take the current cell coordinates and the previous cell coordinates
+
+    #         # subtract
+    #         # figure out which direction
+    
     def build_history(self):
+        #TODO rebuild this to work to build the history as a series of moves (i.e. up, down, left, right)
         if self.current_cell is None:
             return
         elif self.current_cell != self.previous_cell:
