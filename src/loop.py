@@ -83,7 +83,7 @@ class Loop(metaclass=singleton.SingletonMeta):
                             cell.check_for_markers(self.my_markers[id[0]])
 
                 # Draw the grid
-                image_final = self.board.draw_board(image, self.primary_color)
+                image_final = self.board.draw_board(image, self.primary_color, self.window_size)
 
                 cv2.imshow('frame', image_final)
                 if cv2.waitKey(1) & 0xFF == ord('q'):

@@ -37,7 +37,7 @@ aruco_dict = aruco.getPredefinedDictionary(aruco.DICT_6X6_50)
 parameters = aruco.DetectorParameters()
 marker_size = 100
 grid_size = 5 # size of the grid
-primary_color = (245, 200, 25) # BGR
+primary_color = (200, 200, 200) # BGR
 gesture_history_length = 10
 
 # import the camera matrix and distortion coefficients

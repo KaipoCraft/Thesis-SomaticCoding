@@ -75,7 +75,7 @@ class Cell:
         text_y = int(self.y + self.size[1] // 2 + text_size[1] // 2)
 
         # draw the text with the updated position
-        cv2.putText(image, str(self.id), (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2, cv2.LINE_AA)
+        cv2.putText(image, str(self.id), (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1, cv2.LINE_AA)
 
         # cv2.putText(image, str(self.id), (int(self.x + self.size[0]//2), int(self.y + self.size[1]//2)), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2, cv2.LINE_AA)
         
@@ -94,7 +94,8 @@ class Board(metaclass=singleton.SingletonMeta):
     def __init__(self):
         self.cells = []
         
-    def draw_board(self, image, color):
+    def draw_board(self, image, color, window_size):
+        cv2.rectangle(image, (0, 0), (window_size[0], window_size[1]), (10, 10, 10), -1)
         # Draw the cells
         for cell in self.cells:
             cell.draw_cell(image, color)
