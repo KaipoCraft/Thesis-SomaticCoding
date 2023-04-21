@@ -9,7 +9,7 @@ import board
 import singleton
 
 class Loop(metaclass=singleton.SingletonMeta):
-    def __init__(self, camera: int, primary_color: list, grid_size: tuple, marker_dict: dict, aruco_dict: object, params: object, marker_size: int, camera_matrix: object, dist_coeffs: object):
+    def __init__(self, camera: int, primary_color: list, grid_size: tuple, marker_dict: dict, aruco_dict: object, params: object, marker_size: int, camera_matrix: object, dist_coeffs: object, gesture_history_length: int):
         '''
         Params:
             camera: the camera to use
@@ -31,12 +31,13 @@ class Loop(metaclass=singleton.SingletonMeta):
         self.marker_size = marker_size
         self.camera_matrix = camera_matrix
         self.dist_coeffs = dist_coeffs
+        self.history_length = gesture_history_length
         # Will be set dynamically, but defaults to 1920x1080
         self.window_size = (1920, 1080)
         # Make a list for instantiated markers to be stored in
         self.my_markers = []
         # Instantiate the cursor marker upon initialization
-        self.cursor = markers.CursorMarker(self.marker_dict[0][0], self.marker_dict[0][1])
+        # self.cursor = markers.CursorMarker(self.marker_dict[0][0], self.marker_dict[0][1], gesture_history_length)
         # Instantiate the data observers upon initialization
         self.gesture_observer = observer.Executioner()
         # Instantiate the board upon initialization
@@ -107,8 +108,6 @@ class Loop(metaclass=singleton.SingletonMeta):
             self.my_markers[id].update_marker(corners[detected_ids.index(id)][0], ids[detected_ids.index(id)])
             # if self.my_markers[id].is_visible:
             self.my_markers[id].draw_marker(image, self.primary_color)
-            
-            self.gesture_observer.update(self.my_markers[id])
 
         return image
     
@@ -117,7 +116,7 @@ class Loop(metaclass=singleton.SingletonMeta):
         Make the markers via the MarkerFactory and attach the observer to them
         '''
         # Iterate through the marker dictionary and make each marker object based on the dictionary
-        self.my_markers = markers.MarkerFactory.make_markers(self.marker_dict)
+        self.my_markers = markers.MarkerFactory.make_markers(self.marker_dict, self.history_length)
         # Attach our observer to the markers
         for marker in self.my_markers:
             marker.attach_observer(self.gesture_observer)

@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 import numpy as np
 import cv2
+import calculations
 
 class Marker(ABC):
     @abstractmethod
@@ -53,18 +54,22 @@ class Marker(ABC):
     def get_data(self):
         return self.data
     
-    def set_current_cell(self, cell):
-        self.current_cell = cell
+    def set_current_cell(self, cell_id):
+        # self.current_cell = (cell_id)
+        if cell_id == None:
+            self.current_cell = None
+        else:
+            self.current_cell = [int(x) for x in cell_id.split(",")]
 
 #------------------------------------------------------------#
 
 class MarkerFactory:    
     @staticmethod
-    def make_markers(markers):
+    def make_markers(markers, history_length):
         marker_list = []
         for marker_id, data in markers.items():
             if data == 'cursor':
-                marker_list.append(CursorMarker(marker_id, data))
+                marker_list.append(CursorMarker(marker_id, data, history_length))
             else:
                 marker_list.append(DataMarker(marker_id, data))
         return marker_list
@@ -72,13 +77,24 @@ class MarkerFactory:
 #------------------------------------------------------------#
 
 class CursorMarker(Marker):
-    def __init__(self, marker_id, data) -> None:
+    def __init__(self, marker_id, data, history_length) -> None:
         super().__init__(marker_id, data)
         self.current_cell = None
         self.previous_cell = None
         self.cell_history = []
-        self.history_length = 10
+        self.direction_history = []
+        self.history_length = history_length
         self.is_cursor = True
+        self.direction_dict = {
+            (1, 0): "→",
+            (-1, 0): "←",
+            (0, 1): "↓",
+            (0, -1): "↑",
+            # (1, 1): "↘",
+            # (-1, 1): "↙",
+            # (1, -1): "↗",
+            # (-1, -1): "↖"
+        }
 
     def attach_observer(self, observer):
         super().attach_observer(observer)
@@ -101,35 +117,52 @@ class CursorMarker(Marker):
     
     # When something the Executioner wants to know about the cursor changes, notify the Executioner
     def notify_observers(self):
+        #TODO change so that the marker only notifies the Executioner when the history gets full
         for observer in self.marker_observers:
-            observer.check_gesture(self.cell_history)
+            observer.check_gesture(self.cell_history, self.direction_history)
     
     def update_marker(self, corners, ids):
         super().update_marker(corners, ids)
-        self.build_history()
-        self.notify_observers()
-        return super().update_marker(corners, ids)
+        if self.current_cell is not None:
+            self.build_history()
+            if len(self.direction_history) > self.history_length:
+                self.notify_observers()
+    
+    def build_history(self):
+        if self.previous_cell is None:
+            self.previous_cell = self.current_cell
+        elif self.current_cell != self.previous_cell:
+            dx = calculations.get_sign(self.current_cell[0] - self.previous_cell[0])
+            dy = calculations.get_sign(self.current_cell[1] - self.previous_cell[1])
+
+            if (dx, dy) in self.direction_dict.keys():
+                direction = self.direction_dict[(dx, dy)]
+                if len(self.direction_history) <= self.history_length:
+                    self.direction_history.append(direction)
+                    self.cell_history.append(self.current_cell)
+                else:
+                    self.direction_history.pop(0)
+                    self.cell_history.pop(0)
+                    self.direction_history.append(direction)
+                    self.cell_history.append(self.current_cell)
+            
+                self.previous_cell = self.current_cell
+                print(self.direction_history)
+            else:
+                print("Error: Invalid direction")
+                
     
     # def build_history(self):
+    #     #TODO rebuild this to work to build the history as a series of moves (i.e. up, down, left, right)
     #     if self.current_cell is None:
     #         return
     #     elif self.current_cell != self.previous_cell:
-    #         # Take the current cell coordinates and the previous cell coordinates
-
-    #         # subtract
-    #         # figure out which direction
-    
-    def build_history(self):
-        #TODO rebuild this to work to build the history as a series of moves (i.e. up, down, left, right)
-        if self.current_cell is None:
-            return
-        elif self.current_cell != self.previous_cell:
-            if len(self.cell_history) <= self.history_length:
-                self.cell_history.append(self.current_cell)
-            else:
-                self.cell_history.pop(0)
-                self.cell_history.append(self.current_cell)
-            self.previous_cell = self.current_cell
+    #         if len(self.direction_history) <= self.history_length:
+    #             self.direction_history.append(self.current_cell)
+    #         else:
+    #             self.direction_history.pop(0)
+    #             self.direction_history.append(self.current_cell)
+    #         self.previous_cell = self.current_cell
             
 class DataMarker(Marker):
     def __init__(self, marker_id, data):
