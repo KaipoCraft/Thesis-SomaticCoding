@@ -119,7 +119,7 @@ class CursorMarker(Marker):
     def notify_observers(self):
         #TODO change so that the marker only notifies the Executioner when the history gets full
         for observer in self.marker_observers:
-            observer.check_gesture(self.cell_history, self.direction_history)
+            observer.check_gesture(self.direction_history, self.cell_history)
     
     def update_marker(self, corners, ids):
         super().update_marker(corners, ids)
@@ -127,13 +127,18 @@ class CursorMarker(Marker):
             self.build_history()
             if len(self.direction_history) > self.history_length:
                 self.notify_observers()
+                self.direction_history = []
+                self.cell_history = []
     
     def build_history(self):
         if self.previous_cell is None:
             self.previous_cell = self.current_cell
         elif self.current_cell != self.previous_cell:
-            dx = calculations.get_sign(self.current_cell[0] - self.previous_cell[0])
-            dy = calculations.get_sign(self.current_cell[1] - self.previous_cell[1])
+            dir_x = self.current_cell[0] - self.previous_cell[0]
+            dir_y = self.current_cell[1] - self.previous_cell[1]
+
+            dx = calculations.get_sign(dir_x)
+            dy = calculations.get_sign(dir_y)
 
             if (dx, dy) in self.direction_dict.keys():
                 direction = self.direction_dict[(dx, dy)]
@@ -147,9 +152,6 @@ class CursorMarker(Marker):
                     self.cell_history.append(self.current_cell)
             
                 self.previous_cell = self.current_cell
-                print(self.direction_history)
-            else:
-                print("Error: Invalid direction")
                 
     
     # def build_history(self):

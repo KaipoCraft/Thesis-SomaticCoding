@@ -14,9 +14,9 @@ class Executioner(metaclass=singleton.SingletonMeta):
                 gesture.execute()
 
     # Checks for gestures by passing the cell history to the interpreter
-    def check_gesture(self, cell_history, movement_history):
-        detected_gesture = interpreter.GestureInterpreter().check_for_gesture(cell_history, movement_history)
-        if detected_gesture:
-            self.execute(detected_gesture)
+    def check_gesture(self, cell_history_, movement_history_):
+        detected_gesture = interpreter.GestureInterpreter().interpret_gesture(cell_history_, movement_history_)
+        # if detected_gesture:
+        #     self.execute(detected_gesture)
         # else:
             # print("No gesture detected")
