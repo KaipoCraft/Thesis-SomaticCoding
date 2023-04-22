@@ -36,7 +36,7 @@ marker_dict = {
 aruco_dict = aruco.getPredefinedDictionary(aruco.DICT_6X6_50)
 parameters = aruco.DetectorParameters()
 marker_size = 100
-grid_size = 5 # size of the grid
+grid_size = 10 # size of the grid
 primary_color = (200, 200, 200) # BGR
 gesture_history_length = 10
 
