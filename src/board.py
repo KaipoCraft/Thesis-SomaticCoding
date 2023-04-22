@@ -1,5 +1,6 @@
 import cv2
 import singleton
+import factory
 
 class Cell:
     def __init__(self, x, y, id, size):
@@ -114,30 +115,6 @@ class Board(metaclass=singleton.SingletonMeta):
     def get_cells(self):
         return self.cells
     
-class BoardFactory():
-    @staticmethod
-    def make_board(window_dims, grid_dims):
-        # version where grid_size is the number of squares in the grid on the shortest window dimension
-        width = window_dims[0]
-        height = window_dims[1]
-        board = Board()
-
-        square_unit_size = min(width, height) // grid_dims
-        num_squares_height = int(height // square_unit_size)
-        num_squares_width = int(width // square_unit_size)
-
-        margin_x = (width - (num_squares_width * square_unit_size)) // 2
-        margin_y = (height - (num_squares_height * square_unit_size)) // 2
-
-        for i in range(num_squares_width):
-            for j in range(num_squares_height):
-                cell_x = i * square_unit_size + margin_x
-                cell_y = j * square_unit_size + margin_y
-                if cell_x > width:
-                    pass
-                elif cell_y > height:
-                    pass
-                else:
-                    id = f'{i},{j}'
-                    board.cells.append(Cell(cell_x, cell_y, id, (square_unit_size, square_unit_size)))
-        return board
+    def generate_board(self, window_dims_, grid_rows_):
+        generated_board = factory.BoardFactory.make_board(self, window_dims_, grid_rows_)
+        return generated_board

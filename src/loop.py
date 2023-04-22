@@ -7,6 +7,7 @@ import markers
 import observer
 import board
 import singleton
+import factory
 
 class Loop(metaclass=singleton.SingletonMeta):
     def __init__(self, camera: int, primary_color: list, grid_size: tuple, marker_dict: dict, aruco_dict: object, params: object, marker_size: int, camera_matrix: object, dist_coeffs: object, gesture_history_length: int):
@@ -41,7 +42,10 @@ class Loop(metaclass=singleton.SingletonMeta):
         # Instantiate the data observers upon initialization
         self.gesture_observer = observer.Executioner()
         # Instantiate the board upon initialization
-        self.board = None
+        self.board = board.Board()
+
+    def setup(self):
+        self.board.generate_board(self.window_size, self.grid_size)
     
     def run_camera(self):
         '''
@@ -116,19 +120,12 @@ class Loop(metaclass=singleton.SingletonMeta):
         Make the markers via the MarkerFactory and attach the observer to them
         '''
         # Iterate through the marker dictionary and make each marker object based on the dictionary
-        self.my_markers = markers.MarkerFactory.make_markers(self.marker_dict, self.history_length)
+        self.my_markers = factory.MarkerFactory.make_markers(self.marker_dict, self.history_length)
         # Attach our observer to the markers
         for marker in self.my_markers:
             marker.attach_observer(self.gesture_observer)
 
         print(str(len(self.my_markers)) + " markers instantiated")
-
-    def make_board(self):
-        '''
-        Make the board via the BoardFactory
-        '''
-        self.board = board.BoardFactory.make_board(self.window_size, self.grid_size)
-        # self.board.attach_cell_observers(self.gesture_observer)
 
     def set_feed_dims(self):
         '''

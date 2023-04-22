@@ -63,19 +63,6 @@ class Marker(ABC):
 
 #------------------------------------------------------------#
 
-class MarkerFactory:    
-    @staticmethod
-    def make_markers(markers, history_length):
-        marker_list = []
-        for marker_id, data in markers.items():
-            if data == 'cursor':
-                marker_list.append(CursorMarker(marker_id, data, history_length))
-            else:
-                marker_list.append(DataMarker(marker_id, data))
-        return marker_list
-
-#------------------------------------------------------------#
-
 class CursorMarker(Marker):
     def __init__(self, marker_id, data, history_length) -> None:
         super().__init__(marker_id, data)
@@ -119,7 +106,7 @@ class CursorMarker(Marker):
     def notify_observers(self):
         #TODO change so that the marker only notifies the Executioner when the history gets full
         for observer in self.marker_observers:
-            observer.check_gesture(self.direction_history, self.cell_history)
+            observer.update(self.direction_history, self.cell_history)
     
     def update_marker(self, corners, ids):
         super().update_marker(corners, ids)

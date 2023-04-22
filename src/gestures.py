@@ -1,49 +1,32 @@
 import inspect
+import gestureBehavior
 
-class GestureInterpreter:
-    def __init__(self):
-        self.gesture_list = [ClockwiseCircleGesture(), CounterClockwiseCircleGesture(), UnderlineGesture()]
-
-    def update(self, shape_name):
-        for gesture in self.gesture_list:
-            if gesture.get_shape_name() == shape_name:
-                gesture.execute()
-                break
-
-    def interpret_gesture(self, movement_history_, cell_history_):
-        #TODO rework this so that if a gesture is found, it is executed and the loop breaks
-
-        for gesture in self.gesture_list:
-            if gesture.found:
-                gesture.execute()
-                break
-
-#------------------------------------------------------------#
-
-class GestureCommand:
-    def __init__(self):
+class Gesture:
+    def __init__(self, shape_multiplier_=1):
         self.opposite_dictionary = {"←": "→", "→": "←", "↑": "↓", "↓": "↑"}
         self.tracked_movement = []
         self.shape = None
+        self.shape_multiplier = shape_multiplier_
         self.shape_name = None
         self.needs_return_cell = True
         self.found = False
         self.observers = []
+        self.execute_behavior = None
 
     def execute(self):
         pass
-
     def attach_observer(self, observer):
         self.observers.append(observer)
-    def detach_observer(self, observer):
-        self.observers.remove(observer)
     def notify_observers(self):
         for observer in self.observers:
             observer.update(self.shape_name)
+    # Adds the ability to increase the size of the gesture (could be useful for increased cell counts)
+    def extend_shape(self):
+        self.shape = ''.join([char * self.shape_multiplier for char in self.shape])
 
     def check_for_gesture(self, movement_history_, cell_history_):
-
         start_index = None
+        print("checking")
 
         # Run through every movement in the movement history
         for i in range(len(movement_history_)):
@@ -77,17 +60,35 @@ class GestureCommand:
                         start_index = cell_history_[i]
                 # If the movement in the history is the opposite of the desired movement, we reset the tracked movement
                 elif movement_history_[i] == self.opposite_dictionary[desired_movement]:
-                    self.tracked_movement = []
+                    # self.tracked_movement = []
                     start_index = None
+                    print("damn")
 
     def get_shape_name(self):
         return self.shape_name
 
 #------------------------------------------------------------#
 
-class ClockwiseCircleGesture(GestureCommand):
-    def __init__(self):
-        super().__init__()
+class TestGesture(Gesture):
+    def __init__(self, shape_multiplier_=1):
+        super().__init__(shape_multiplier_)
+        self.shape = ["←", "←"]
+        self.shape_name = "Test"
+        self.needs_return_cell = False
+        self.execute_behavior = gestureBehavior.TestBehavior()
+
+    def execute(self):
+        print("Test Gesture Command")
+    
+    def check_for_gesture(self, movement_history_, cell_history_):
+        super().check_for_gesture(movement_history_, cell_history_)
+
+    def get_shape_name(self):
+        super().get_shape_name()
+
+class ClockwiseCircleGesture(Gesture):
+    def __init__(self, shape_multiplier_=1):
+        super().__init__(shape_multiplier_)
         self.shape = ["←", "↑", "→", "↓"]
         self.shape_name = "Clockwise Circle"
         self.needs_return_cell = True
@@ -101,9 +102,9 @@ class ClockwiseCircleGesture(GestureCommand):
     def get_shape_name(self):
         super().get_shape_name()
 
-class CounterClockwiseCircleGesture(GestureCommand):
-    def __init__(self):
-        super().__init__()
+class CounterClockwiseCircleGesture(Gesture):
+    def __init__(self, shape_multiplier_=1):
+        super().__init__(shape_multiplier_)
         self.shape = ["←", "↓", "→", "↑"]
         self.shape_name = "Counter-Clockwise Circle"
         self.needs_return_cell = True
@@ -117,9 +118,9 @@ class CounterClockwiseCircleGesture(GestureCommand):
     def get_shape_name(self):
         super().get_shape_name()
 
-class UnderlineGesture(GestureCommand):
-    def __init__(self):
-        super().__init__()
+class UnderlineGesture(Gesture):
+    def __init__(self, shape_multiplier_=1):
+        super().__init__(shape_multiplier_)
         self.shape = ["←", "←", "←", "→", "→", "→"]
         self.shape_name = "Underline"
         self.needs_return_cell = False
