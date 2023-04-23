@@ -157,7 +157,9 @@ class DataMarker(Marker):
     def __init__(self, marker_id, data):
         super().__init__(marker_id, data)
         self.data = data
-        self.secondary_data = None
+        # Holds the changes made to the data
+        # A dictionary of the function and the result
+        self.memory = {}
 
     def attach_observer(self, observer):
         super().attach_observer(observer)

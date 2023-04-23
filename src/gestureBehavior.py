@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 class GestureBehavior(ABC):
 
     def execute(self):
-        pass
+        print("No behavior defined for this gesture")
 
 #------------------------------------------------------------#
 class TestBehavior(GestureBehavior):
@@ -20,6 +20,11 @@ class PrintBehavior(GestureBehavior):
 
 # Users use the concat function to concatenate the data on the visible markers
 class ConcatBehavior(GestureBehavior):
+    
+    def execute(self):
+        super().execute()
+
+class SplitBehavior(GestureBehavior):
     
     def execute(self):
         super().execute()

@@ -7,13 +7,13 @@ class Executioner(metaclass=singleton.SingletonMeta):
     def __init__(self) -> None:
         self.active_data_markers = []
         self.gesture_list = [gestures.ClockwiseCircleGesture(), gestures.CounterClockwiseCircleGesture(), gestures.UnderlineGesture()]
-        self.gesture_objects = factory.GestureFactory().make_gestures(self.gesture_list)
+        # self.gesture_objects = factory.GestureFactory().make_gestures(self.gesture_list)
     
     def update(self, cell_history_, movement_history_):
         # Iterate through each gesture, checking to see if it has been found
-        for gesture_object in self.gesture_objects:
+        for gesture_object in self.gesture_list:
             # Run the check inside each gesture object
-            gesture_object.update(cell_history_, movement_history_)
+            gesture_object.check_for_gesture(cell_history_, movement_history_)
             # If the gesture has been found, execute the corresponding command and stop looking for new gestures
             if gesture_object.found:
                 altered_data = gesture_object.execute()

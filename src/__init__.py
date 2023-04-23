@@ -37,17 +37,13 @@ aruco_dict = aruco.getPredefinedDictionary(aruco.DICT_6X6_50)
 parameters = aruco.DetectorParameters()
 marker_size = 100
 grid_size = 6 # amount of cells rows, columns are variable depending on camera resolution
-primary_color = (200, 200, 200) # BGR
+primary_color = (0, 200, 200) # BGR
 gesture_history_length = 5
 
 # import the camera matrix and distortion coefficients
 camera_matrix, dist_coeffs = calibration.calibrate.Calibrator(0, file_name='camera_calibration_desktop').get_matrix()
 
 # Create the main object and generate the markers
-mainLoop = loop.Loop(0, primary_color, grid_size, marker_dict, aruco_dict, parameters, marker_size, camera_matrix, dist_coeffs, gesture_history_length=gesture_history_length)
-mainLoop.set_feed_dims()
-mainLoop.setup()
-mainLoop.make_markers()
-
-# Main loop
-mainLoop.run_camera()
+loop_ = loop.Loop(primary_color, grid_size, marker_dict, aruco_dict, parameters, marker_size, camera_matrix, dist_coeffs, gesture_history_length=gesture_history_length)
+loop_.setup()
+loop_.run()

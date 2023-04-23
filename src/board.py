@@ -64,9 +64,12 @@ class Cell:
         #TODO fix this, it seems to only want to draw one thicker rectangle at a time
         if self.is_empty:
             border_thickness = 1
+        elif self.marker.is_cursor:
+            border_thickness = -1
         else:
-            border_thickness = 5
-        cv2.rectangle(image, (int(self.x), int(self.y)), (int(self.x + self.size[0]), int(self.y + self.size[1])), color, border_thickness)
+            border_thickness = -1
+            color = (0, 0, 255)
+        cv2.rectangle(image, (int(self.x), int(self.y)), (int(self.x + self.size[0]-border_thickness), int(self.y + self.size[1]-border_thickness)), color, border_thickness)
 
         # calculate the size of the text
         text_size, _ = cv2.getTextSize(str(self.id), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 2)
