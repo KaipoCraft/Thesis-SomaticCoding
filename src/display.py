@@ -55,6 +55,9 @@ class Display(metaclass=singleton.SingletonMeta):
 
             # Draw the markers
             frame = aruco.drawDetectedMarkers(frame.copy(), corners, ids, borderColor=(0, 0, 0))
+            
+            # Draw the grid
+            frame = self.board.draw_board(frame, self.primary_color, (self.video_feed_width, self.video_feed_height))
 
             frame = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)
             # If we have detected a marker
@@ -63,9 +66,10 @@ class Display(metaclass=singleton.SingletonMeta):
                 self.process_markers(corners, ids, frame)
                 for id in ids:
                     for cell in self.board.cells:
+                        cell.draw_active_cell(frame, self.primary_color)
                         cell.check_for_markers(self.my_markers[id[0]])
-            # Draw the grid
-            frame = self.board.draw_board(frame, self.primary_color, (self.video_feed_width, self.video_feed_height))
+            
+            frame = cv2.flip(frame, 1)
             
             # Create a PIL image from the OpenCV frame
             img = Image.fromarray(frame)

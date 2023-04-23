@@ -59,16 +59,26 @@ class Cell:
         self.marker.set_current_cell(None)   # Set the marker's current cell to None
         self.marker = None
         # self.notify_observers()         # Notify the observers with up to date info
+
+    def draw_active_cell(self, image_, color_):
+        '''
+        Draws the cell with a border around it
+        Params:
+            image_: the image that the cell is being drawn on
+            color_: the color of the border
+        '''
+        if self.marker:
+            if self.marker.is_cursor:
+                color = color_
+            else:
+                color = (color_[2], color_[1], color_[0])
+            border_thickness = -1
+            cv2.rectangle(image_, (int(self.x), int(self.y)), (int(self.x + self.size[0] - abs(border_thickness)), int(self.y + self.size[1] - abs(border_thickness))), color, border_thickness)
+        return image_
         
     def draw_cell(self, image, color):
         #TODO fix this, it seems to only want to draw one thicker rectangle at a time
-        if self.is_empty:
-            border_thickness = 1
-        elif self.marker.is_cursor:
-            border_thickness = -1
-        else:
-            border_thickness = -1
-            color = (0, 0, 255)
+        border_thickness = 1
         cv2.rectangle(image, (int(self.x), int(self.y)), (int(self.x + self.size[0]-border_thickness), int(self.y + self.size[1]-border_thickness)), color, border_thickness)
 
         # calculate the size of the text
@@ -99,7 +109,7 @@ class Board(metaclass=singleton.SingletonMeta):
         self.cells = []
         
     def draw_board(self, image, color, window_size):
-        cv2.rectangle(image, (0, 0), (window_size[0], window_size[1]), (10, 10, 10), -1)
+        # cv2.rectangle(image, (0, 0), (window_size[0], window_size[1]), (10, 10, 10), -1)
         # Draw the cells
         for cell in self.cells:
             cell.draw_cell(image, color)
