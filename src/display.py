@@ -33,17 +33,20 @@ class Display(metaclass=singleton.SingletonMeta):
 
     def setup(self):
         # Create a canvas to hold the video feed
-        self.canvas = tk.Canvas(self.root, width=self.screen_width, height=self.screen_height)
-        
+        self.canvas = tk.Canvas(self.root, width=self.screen_width * 2/3 + 3, height=self.screen_height)
+        self.canvas["bg"]="#%02x%02x%02x" % self.primary_color
         # self.canvas.pack(side=tk.LEFT, padx=10, pady=10)
         self.canvas.pack(side=tk.LEFT)
+    
+        # Create a label widget to display additional information
+        self.label = tk.Label(self.root, text="Some additional information")
+        self.label["bg"]="#%02x%02x%02x" % self.primary_color
+        self.label.pack(side=tk.LEFT, padx=10, pady=10)
 
-        # Add text to the right of the canvas
-        self.label = tk.Label(self.root, text="Hello")
-        self.label.pack(side=tk.LEFT)
 
     # Define the video capture loop
     def video_loop(self):
+
         ret, frame = self.cap.read()
         if ret:
             # Convert the frame to RGB color space and resize it
@@ -51,15 +54,15 @@ class Display(metaclass=singleton.SingletonMeta):
             frame = cv2.resize(frame, (self.video_feed_width, self.video_feed_height))
 
             # Detect the aruco markers
-            corners, ids, rejectedImgPoints = aruco.detectMarkers(frame, self.aruco_dict, parameters=self.params)
+            corners, ids, _ = aruco.detectMarkers(frame, self.aruco_dict, parameters=self.params)
 
             # Draw the markers
             frame = aruco.drawDetectedMarkers(frame.copy(), corners, ids, borderColor=(0, 0, 0))
+
+            frame = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)
             
             # Draw the grid
             frame = self.board.draw_board(frame, self.primary_color, (self.video_feed_width, self.video_feed_height))
-
-            frame = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)
             # If we have detected a marker
             if ids is not None:
                 # Process the markers
@@ -74,7 +77,8 @@ class Display(metaclass=singleton.SingletonMeta):
             # Create a PIL image from the OpenCV frame
             img = Image.fromarray(frame)
 
-            x = (self.screen_width - self.video_feed_width) / 2
+            # Accounts for the border width and the thickness of the grid lines
+            x = 4
             y = (self.screen_height - self.video_feed_height) / 2
 
             imgtk = ImageTk.PhotoImage(image=img)
@@ -82,7 +86,7 @@ class Display(metaclass=singleton.SingletonMeta):
             try:
                 # Update the canvas with the new image
                 self.canvas.imgtk = imgtk
-                self.canvas["bg"]="black"
+
                 self.canvas.create_image(x, y, anchor=tk.NW, image=imgtk)
                 
             except tk.TclError as e:

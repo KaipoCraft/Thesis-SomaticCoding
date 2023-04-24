@@ -42,7 +42,7 @@ class Marker(ABC):
         # Draw the center
         radius = 10
         cv2.circle(image, (int(self.marker_center[0]), int(self.marker_center[1])), radius, color, -1)
-        cv2.putText(image, str(self.data), (int(self.marker_center[0]) + radius, int(self.marker_center[1])), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2, cv2.LINE_AA)
+        # cv2.putText(image, str(self.data), (int(self.marker_center[0]) + radius, int(self.marker_center[1])), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2, cv2.LINE_AA)
         return image
 
     def get_center(self):

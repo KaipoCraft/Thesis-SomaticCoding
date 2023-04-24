@@ -69,31 +69,39 @@ class Cell:
         '''
         if self.marker:
             if self.marker.is_cursor:
-                color = color_
+                color = (0,0,244)
             else:
-                color = (color_[2], color_[1], color_[0])
+                color = (155,0,0)
             border_thickness = -1
-            cv2.rectangle(image_, (int(self.x), int(self.y)), (int(self.x + self.size[0] - abs(border_thickness)), int(self.y + self.size[1] - abs(border_thickness))), color, border_thickness)
+
+            overlay = image_.copy()
+            cv2.rectangle(overlay, (int(self.x), int(self.y)), (int(self.x + self.size[0]-abs(border_thickness)), int(self.y + self.size[1]-abs(border_thickness))), color, border_thickness)
+            alpha = 0.5
+            image_ = cv2.addWeighted(overlay, alpha, image_, 1 - alpha, 0, image_)
         return image_
         
-    def draw_cell(self, image, color):
-        #TODO fix this, it seems to only want to draw one thicker rectangle at a time
-        border_thickness = 1
-        cv2.rectangle(image, (int(self.x), int(self.y)), (int(self.x + self.size[0]-border_thickness), int(self.y + self.size[1]-border_thickness)), color, border_thickness)
+    def draw_cell(self, image_, color_):
+        border_thickness = -1
 
-        # calculate the size of the text
-        text_size, _ = cv2.getTextSize(str(self.id), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 2)
+        # overlay = image_.copy()
+        # cv2.rectangle(overlay, (int(self.x), int(self.y)), (int(self.x + self.size[0]-abs(border_thickness)), int(self.y + self.size[1]-abs(border_thickness))), (255,255,255), border_thickness)
+        # alpha = 0.5
+        # image_ = cv2.addWeighted(overlay, alpha, image_, 1 - alpha, 0, image_)
 
-        # calculate the center of the bounding box of the text
-        text_x = int(self.x + self.size[0] // 2 - text_size[0] // 2)
-        text_y = int(self.y + self.size[1] // 2 + text_size[1] // 2)
+        cv2.rectangle(image_, (int(self.x), int(self.y)), (int(self.x + self.size[0]-abs(border_thickness)), int(self.y + self.size[1]-abs(border_thickness))), (255,245,245), border_thickness)
+        cv2.rectangle(image_, (int(self.x), int(self.y)), (int(self.x + self.size[0]-abs(border_thickness)), int(self.y + self.size[1]-abs(border_thickness))), color_, 2)
 
-        # draw the text with the updated position
-        cv2.putText(image, str(self.id), (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1, cv2.LINE_AA)
+        # # calculate the size of the text
+        # text_size, _ = cv2.getTextSize(str(self.id), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 2)
 
-        # cv2.putText(image, str(self.id), (int(self.x + self.size[0]//2), int(self.y + self.size[1]//2)), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2, cv2.LINE_AA)
+        # # calculate the center of the bounding box of the text
+        # text_x = int(self.x + self.size[0] // 2 - text_size[0] // 2)
+        # text_y = int(self.y + self.size[1] // 2 + text_size[1] // 2)
+
+        # # draw the text with the updated position
+        # cv2.putText(image_, str(self.id), (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color_, 1, cv2.LINE_AA)
         
-        return image
+        return image_
     
     def get_marker(self):
         return self.marker
