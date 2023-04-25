@@ -30,3 +30,6 @@ class Executioner(metaclass=singleton.SingletonMeta):
         for gesture in self.gestures:
             if gesture == detected_gesture:
                 gesture.build_data_memory()
+
+    def set_active_data_markers(self, data_markers):
+        self.active_data_markers.append(data_markers)

@@ -165,12 +165,8 @@ class DataMarker(Marker):
         super().attach_observer(observer)
     def detach_observer(self, observer):
         super().detach_observer(observer)
-    # def notify_observers(self):
-    #     super().notify_observers()
     def get_data(self):
         return super().get_data()
-    def update_marker(self, corners, ids):
-        return super().update_marker(corners, ids)
     def calculate_center(self, corners):
         return super().calculate_center(corners)
     def __str__(self) -> str:
@@ -183,3 +179,11 @@ class DataMarker(Marker):
         return super().draw_marker(image, color)
     def set_current_cell(self, cell):
         super().set_current_cell(cell)
+
+    def update_marker(self, corners, ids):
+        super().update_marker(corners, ids)
+        self.notify_observers()
+    
+    def notify_observers(self):
+        for observer in self.marker_observers:
+            observer.set_active_data_markers(self)

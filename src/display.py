@@ -7,11 +7,14 @@ import singleton
 
 # Abstract class that all displays will inherit from
 class Display(metaclass=singleton.SingletonMeta):
-    def __init__(self, aruco_dict_, params_, board_ : object, primary_color_):
+    def __init__(self, aruco_dict_, params_, board_ : object, primary_color_, background_color_):
         self.aruco_dict = aruco_dict_
         self.params = params_
         self.board = board_
         self.primary_color = primary_color_
+        self.primary_color_tkinter = "#%02x%02x%02x" % self.primary_color
+        self.background_color = background_color_
+        self.background_color_tkinter = "#%02x%02x%02x" % background_color_
 
         # Create a Tkinter window
         self.root = tk.Tk()
@@ -32,16 +35,31 @@ class Display(metaclass=singleton.SingletonMeta):
         self.cap = cv2.VideoCapture(0)
 
     def setup(self):
+        # Create a frame to hold the canvas widget
+        frame = tk.Frame(self.root, borderwidth=0)
+        frame.pack(side=tk.LEFT)
+
+        self.root.configure(background = self.background_color_tkinter)
         # Create a canvas to hold the video feed
-        self.canvas = tk.Canvas(self.root, width=self.screen_width * 2/3 + 3, height=self.screen_height)
-        self.canvas["bg"]="#%02x%02x%02x" % self.primary_color
+        self.canvas = tk.Canvas(frame, width=self.screen_width * 2/3, height=self.screen_height, borderwidth=0)
+        self.canvas["bg"]=self.background_color_tkinter
         # self.canvas.pack(side=tk.LEFT, padx=10, pady=10)
         self.canvas.pack(side=tk.LEFT)
     
         # Create a label widget to display additional information
-        self.label = tk.Label(self.root, text="Some additional information")
-        self.label["bg"]="#%02x%02x%02x" % self.primary_color
-        self.label.pack(side=tk.LEFT, padx=10, pady=10)
+        # self.label = tk.Label(self.root, text="Some additional information")
+        # self.label["bg"]=self.primary_color_tkinter
+        # self.label.pack(side=tk.LEFT, padx=10, pady=10)
+
+        label_frame = tk.Frame(self.root, bg=self.background_color_tkinter, borderwidth=0)
+        label_frame.pack(side=tk.LEFT, fill=tk.Y)       
+
+        # Create label widgets to display additional information
+        self.label1 = tk.Label(label_frame, text="Some additional information 1", bg=self.background_color_tkinter)
+        self.label1.pack(side=tk.TOP, fill=tk.X, padx=10, pady=10)
+
+        self.label2 = tk.Label(label_frame, text="Some additional information 2", bg=self.background_color_tkinter)
+        self.label2.pack(side=tk.TOP, fill=tk.X, padx=10, pady=10)
 
 
     # Define the video capture loop
@@ -62,14 +80,14 @@ class Display(metaclass=singleton.SingletonMeta):
             frame = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)
             
             # Draw the grid
-            frame = self.board.draw_board(frame, self.primary_color, (self.video_feed_width, self.video_feed_height))
+            frame = self.board.draw_board(frame, self.background_color, (self.video_feed_width, self.video_feed_height))
             # If we have detected a marker
             if ids is not None:
                 # Process the markers
                 self.process_markers(corners, ids, frame)
                 for id in ids:
                     for cell in self.board.cells:
-                        cell.draw_active_cell(frame, self.primary_color)
+                        cell.draw_active_cell(frame, self.background_color)
                         cell.check_for_markers(self.my_markers[id[0]])
             
             frame = cv2.flip(frame, 1)
@@ -78,7 +96,7 @@ class Display(metaclass=singleton.SingletonMeta):
             img = Image.fromarray(frame)
 
             # Accounts for the border width and the thickness of the grid lines
-            x = 4
+            x = 0
             y = (self.screen_height - self.video_feed_height) / 2
 
             imgtk = ImageTk.PhotoImage(image=img)

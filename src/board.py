@@ -83,13 +83,13 @@ class Cell:
     def draw_cell(self, image_, color_):
         border_thickness = -1
 
-        # overlay = image_.copy()
-        # cv2.rectangle(overlay, (int(self.x), int(self.y)), (int(self.x + self.size[0]-abs(border_thickness)), int(self.y + self.size[1]-abs(border_thickness))), (255,255,255), border_thickness)
-        # alpha = 0.5
-        # image_ = cv2.addWeighted(overlay, alpha, image_, 1 - alpha, 0, image_)
+        overlay = image_.copy()
+        cv2.rectangle(overlay, (int(self.x), int(self.y)), (int(self.x + self.size[0]-abs(border_thickness)), int(self.y + self.size[1]-abs(border_thickness))), (255,255,255), border_thickness)
+        alpha = 0.5
+        image_ = cv2.addWeighted(overlay, alpha, image_, 1 - alpha, 0, image_)
 
-        cv2.rectangle(image_, (int(self.x), int(self.y)), (int(self.x + self.size[0]-abs(border_thickness)), int(self.y + self.size[1]-abs(border_thickness))), (255,245,245), border_thickness)
-        cv2.rectangle(image_, (int(self.x), int(self.y)), (int(self.x + self.size[0]-abs(border_thickness)), int(self.y + self.size[1]-abs(border_thickness))), color_, 2)
+        # cv2.rectangle(image_, (int(self.x), int(self.y)), (int(self.x + self.size[0]-abs(border_thickness)), int(self.y + self.size[1]-abs(border_thickness))), (255,245,245), border_thickness)
+        cv2.rectangle(image_, (int(self.x), int(self.y)), (int(self.x + self.size[0]-abs(border_thickness)), int(self.y + self.size[1]-abs(border_thickness))), color_, 1)
 
         # # calculate the size of the text
         # text_size, _ = cv2.getTextSize(str(self.id), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 2)

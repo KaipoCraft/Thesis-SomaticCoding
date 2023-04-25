@@ -9,7 +9,7 @@ import factory
 import display
 
 class Loop(metaclass=singleton.SingletonMeta):
-    def __init__(self, primary_color: list, grid_size: tuple, marker_dict: dict, aruco_dict: object, params: object, marker_size: int, camera_matrix: object, dist_coeffs: object, gesture_history_length: int, video_size: float=2/3):
+    def __init__(self, primary_color: list, grid_size: tuple, marker_dict: dict, aruco_dict: object, params: object, marker_size: int, camera_matrix: object, dist_coeffs: object, gesture_history_length: int, background_color=(255,255,255), video_size: float=2/3):
         self.primary_color = primary_color
         self.grid_size = grid_size
         self.marker_dict = marker_dict
@@ -24,7 +24,7 @@ class Loop(metaclass=singleton.SingletonMeta):
         self.my_markers = []
         self.gesture_observer = observer.Executioner()
         self.board = board.Board()
-        self.display = display.Display(self.aruco_dict, self.params, self.board, self.primary_color)
+        self.display = display.Display(self.aruco_dict, self.params, self.board, self.primary_color, background_color)
 
     def setup(self):
         screen_size, video_widget_size = self.set_size()
