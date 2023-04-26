@@ -4,19 +4,19 @@ import factory
 
 # The all knowing object that will execute the function associated with a gesture, and notify the display
 class Executioner(metaclass=singleton.SingletonMeta):
-    def __init__(self) -> None:
+    def __init__(self, markers) -> None:
+        self.markers = markers
         self.active_data_markers = []
-        self.gesture_list = [gestures.ClockwiseCircleGesture(), gestures.CounterClockwiseCircleGesture(), gestures.UnderlineGesture()]
-        # self.gesture_objects = factory.GestureFactory().make_gestures(self.gesture_list)
+        self.gesture_list = [gestures.ClockwiseCircleGesture(), gestures.CounterClockwiseCircleGesture(), gestures.UnderlineGesture(), gestures.VerticalLineGesture()]
     
-    def update(self, cell_history_, movement_history_):
+    def update(self, movement_history_, cell_history_):
         # Iterate through each gesture, checking to see if it has been found
         for gesture_object in self.gesture_list:
             # Run the check inside each gesture object
-            gesture_object.check_for_gesture(cell_history_, movement_history_)
+            gesture_object.check_for_gesture(movement_history_, cell_history_)
             # If the gesture has been found, execute the corresponding command and stop looking for new gestures
             if gesture_object.found:
-                altered_data = gesture_object.execute()
+                gesture_object.execute(self.active_data_markers)
                 break
     
     # Takes the detected gesture and executes the function associated with it
@@ -31,5 +31,10 @@ class Executioner(metaclass=singleton.SingletonMeta):
             if gesture == detected_gesture:
                 gesture.build_data_memory()
 
-    def set_active_data_markers(self, data_markers):
-        self.active_data_markers.append(data_markers)
+    def set_active_data_markers(self):
+        for marker in self.markers:
+            if marker.has_data & marker.is_visible:
+                self.active_data_markers.append(marker)
+            else:
+                if marker in self.active_data_markers:
+                    self.active_data_markers.remove(marker)

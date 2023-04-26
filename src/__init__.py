@@ -11,22 +11,28 @@ import calibration.calibrate
 
 # Create the marker dictionary, which defines the string each marker corresponds to
 marker_dict = {
-    0: ("Hello"),
-    1: ("Goodbye"),
-    2: ("How are you?"),
-    3: ("I'm fine, thank you"),
-    4: ("What's your name?"),
-    5: ("My name is"),
-    6: ("Nice to meet you"),
-    7: ("cursor"),
+    0: ("cursor"),
+    # Prefix
+    1: ("Pre"),
+    2: ("Re"),
+    3: ("Anti"),
+    4: ("De"),
+    5: ("Pro"),
+    6: ("Intra"),
+    # Root
+    7: ("state"),
     8: ("click"),
     9: ("scroll"),
     10: ("zoom"),
     11: ("drag"),
     12: ("drop"),
+    # Suffix
     13: ("select"),
     14: ("deselect"),
-    15: ("undo")
+    15: ("undo"),
+    16: ("redo"),
+    17: ("copy"),
+    18: ("paste"),
 }
 
 # Create the marker dictionary, which will be used to store the markers once they're visible
@@ -38,11 +44,11 @@ parameters = aruco.DetectorParameters()
 marker_size = 100
 grid_size = 6 # amount of cells rows, columns are variable depending on camera resolution
 primary_color = (140, 125, 110)
-background_color = (255, 255, 255)
-gesture_history_length = 5
+background_color = (230, 230, 230)
+gesture_history_length = 10
 
 # import the camera matrix and distortion coefficients
-camera_matrix, dist_coeffs = calibration.calibrate.Calibrator(0, file_name='camera_calibration_desktop').get_matrix()
+camera_matrix, dist_coeffs = calibration.calibrate.Calibrator(0, file_name='camera_calibration_nexigo').get_matrix()
 
 # Create the main object and generate the markers
 loop_ = loop.Loop(primary_color, grid_size, marker_dict, aruco_dict, parameters, marker_size, camera_matrix, dist_coeffs, gesture_history_length=gesture_history_length, background_color=background_color)

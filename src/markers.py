@@ -70,11 +70,13 @@ class CursorMarker(Marker):
         self.previous_cell = None
         self.cell_history = []
         self.direction_history = []
+        self.data = None
+        self.has_data = False
         self.history_length = history_length
         self.is_cursor = True
         self.direction_dict = {
-            (1, 0): "→",
-            (-1, 0): "←",
+            (1, 0): "←",
+            (-1, 0): "→",
             (0, 1): "↓",
             (0, -1): "↑",
             # (1, 1): "↘",
@@ -82,25 +84,6 @@ class CursorMarker(Marker):
             # (1, -1): "↗",
             # (-1, -1): "↖"
         }
-
-    def attach_observer(self, observer):
-        super().attach_observer(observer)
-    def detach_observer(self, observer):
-        super().detach_observer(observer)
-    def get_data(self):
-        return super().get_data()
-    def calculate_center(self, corners):
-        return super().calculate_center(corners)
-    def __str__(self) -> str:
-        return super().__str__()
-    def get_center(self):
-        return super().get_center()
-    def get_id(self):
-        return super().get_id()
-    def draw_marker(self, image, color):
-        return super().draw_marker(image, color)
-    def set_current_cell(self, cell):
-        super().set_current_cell(cell)
     
     # When something the Executioner wants to know about the cursor changes, notify the Executioner
     def notify_observers(self):
@@ -139,46 +122,19 @@ class CursorMarker(Marker):
                     self.cell_history.append(self.current_cell)
             
                 self.previous_cell = self.current_cell
-                
-    
-    # def build_history(self):
-    #     #TODO rebuild this to work to build the history as a series of moves (i.e. up, down, left, right)
-    #     if self.current_cell is None:
-    #         return
-    #     elif self.current_cell != self.previous_cell:
-    #         if len(self.direction_history) <= self.history_length:
-    #             self.direction_history.append(self.current_cell)
-    #         else:
-    #             self.direction_history.pop(0)
-    #             self.direction_history.append(self.current_cell)
-    #         self.previous_cell = self.current_cell
+
+    def set_movement_history(self, direction_history, cell_history):
+        self.direction_history = direction_history
+        self.cell_history = cell_history
             
 class DataMarker(Marker):
     def __init__(self, marker_id, data):
         super().__init__(marker_id, data)
         self.data = data
+        self.has_data = True
         # Holds the changes made to the data
         # A dictionary of the function and the result
-        self.memory = {}
-
-    def attach_observer(self, observer):
-        super().attach_observer(observer)
-    def detach_observer(self, observer):
-        super().detach_observer(observer)
-    def get_data(self):
-        return super().get_data()
-    def calculate_center(self, corners):
-        return super().calculate_center(corners)
-    def __str__(self) -> str:
-        return super().__str__()
-    def get_center(self):
-        return super().get_center()
-    def get_id(self):
-        return super().get_id()
-    def draw_marker(self, image, color):
-        return super().draw_marker(image, color)
-    def set_current_cell(self, cell):
-        super().set_current_cell(cell)
+        self.memory = {"data": self.data}
 
     def update_marker(self, corners, ids):
         super().update_marker(corners, ids)
@@ -186,4 +142,11 @@ class DataMarker(Marker):
     
     def notify_observers(self):
         for observer in self.marker_observers:
-            observer.set_active_data_markers(self)
+            observer.set_active_data_markers()
+
+    def write_data(self, function, result):
+        self.memory[function] = result
+        print(self.memory)
+
+    def get_memory(self):
+        return self.memory

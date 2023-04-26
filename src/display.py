@@ -15,6 +15,7 @@ class Display(metaclass=singleton.SingletonMeta):
         self.primary_color_tkinter = "#%02x%02x%02x" % self.primary_color
         self.background_color = background_color_
         self.background_color_tkinter = "#%02x%02x%02x" % background_color_
+        self.my_markers = []
 
         # Create a Tkinter window
         self.root = tk.Tk()
@@ -34,6 +35,8 @@ class Display(metaclass=singleton.SingletonMeta):
         # Initialize the OpenCV capture object
         self.cap = cv2.VideoCapture(0)
 
+        # self.printed_ids = set()
+
     def setup(self):
         # Create a frame to hold the canvas widget
         frame = tk.Frame(self.root, borderwidth=0)
@@ -46,24 +49,29 @@ class Display(metaclass=singleton.SingletonMeta):
         # self.canvas.pack(side=tk.LEFT, padx=10, pady=10)
         self.canvas.pack(side=tk.LEFT)
     
-        # Create a label widget to display additional information
-        # self.label = tk.Label(self.root, text="Some additional information")
-        # self.label["bg"]=self.primary_color_tkinter
-        # self.label.pack(side=tk.LEFT, padx=10, pady=10)
-
         label_frame = tk.Frame(self.root, bg=self.background_color_tkinter, borderwidth=0)
         label_frame.pack(side=tk.LEFT, fill=tk.Y)       
 
         # Create label widgets to display additional information
-        self.label1 = tk.Label(label_frame, text="Some additional information 1", bg=self.background_color_tkinter)
-        self.label1.pack(side=tk.TOP, fill=tk.X, padx=10, pady=10)
+        # self.label1_text = ""
+        self.label1 = tk.Label(label_frame, text="Detected IDs: ", bg=self.background_color_tkinter, font=("Helvetica", 30), wraplength=self.screen_width*1/3-10)
+        self.label1.config(justify=tk.LEFT)
+        self.label1.pack(side=tk.TOP, fill=tk.X, padx=10, pady=50)
 
-        self.label2 = tk.Label(label_frame, text="Some additional information 2", bg=self.background_color_tkinter)
-        self.label2.pack(side=tk.TOP, fill=tk.X, padx=10, pady=10)
+        self.label2_text = ""
+        self.label2 = tk.Label(label_frame, text=self.label2_text, bg=self.background_color_tkinter, font=("Helvetica", 30), wraplength=self.screen_width*1/3-10)
+        self.label2.config(justify=tk.LEFT)
+        self.label2.pack(side=tk.TOP, fill=tk.X, padx=10, pady=50)
 
+        self.output_label_text = "Output"
+        self.output_label = tk.Label(label_frame, text=self.output_label_text, bg="black", fg="white", font=("Helvetica", 30), wraplength=self.screen_width*1/3-10)
+        self.output_label.config(justify=tk.LEFT)
+        self.output_label.pack(side=tk.BOTTOM, fill=tk.X, padx=10, pady=60)
 
     # Define the video capture loop
     def video_loop(self):
+        label1_text = "Detected IDs: "
+        printed_ids = set()
 
         ret, frame = self.cap.read()
         if ret:
@@ -89,7 +97,32 @@ class Display(metaclass=singleton.SingletonMeta):
                     for cell in self.board.cells:
                         cell.draw_active_cell(frame, self.background_color)
                         cell.check_for_markers(self.my_markers[id[0]])
-            
+
+                    # if id[0] not in printed_ids:
+                    #     # label1_text += str(id[0]) + " "
+                    #     label1_text += str(self.my_markers[id[0]].get_data()) + " "
+                    #     self.label1.config(text=label1_text)
+                    #     printed_ids.add(id[0])
+
+                    # Sort the detected markers from right to left based on their X coordinate
+                    id_coords = []
+                    for i, id in enumerate(ids):
+                        x, y = corners[i][0][0]
+                        id_coords.append((id[0], x))
+                    id_coords = sorted(id_coords, key=lambda x: x[1], reverse=True)
+                    sorted_ids = [id[0] for id in id_coords]
+                    
+                    for id in sorted_ids:
+                        for cell in self.board.cells:
+                            cell.draw_active_cell(frame, self.background_color)
+                            cell.check_for_markers(self.my_markers[id])
+
+                        if id not in printed_ids:
+                            label1_text += str(self.my_markers[id].get_data()) + " "
+                            self.label1.config(text=label1_text)
+                            printed_ids.add(id)
+                    
+                    
             frame = cv2.flip(frame, 1)
             
             # Create a PIL image from the OpenCV frame
