@@ -54,7 +54,7 @@ class Display(metaclass=singleton.SingletonMeta):
 
         # Create label widgets to display additional information
         # self.label1_text = ""
-        self.label1 = tk.Label(label_frame, text="Detected IDs: ", bg=self.background_color_tkinter, font=("Helvetica", 30), wraplength=self.screen_width*1/3-10)
+        self.label1 = tk.Label(label_frame, text="Structure: ", bg=self.background_color_tkinter, font=("Helvetica", 30), wraplength=self.screen_width*1/3-10)
         self.label1.config(justify=tk.LEFT)
         self.label1.pack(side=tk.TOP, fill=tk.X, padx=10, pady=50)
 
@@ -70,7 +70,8 @@ class Display(metaclass=singleton.SingletonMeta):
 
     # Define the video capture loop
     def video_loop(self):
-        label1_text = "Detected IDs: "
+        label1_text = ""
+        label2_text = ""
         printed_ids = set()
 
         ret, frame = self.cap.read()
@@ -93,34 +94,33 @@ class Display(metaclass=singleton.SingletonMeta):
             if ids is not None:
                 # Process the markers
                 self.process_markers(corners, ids, frame)
-                for id in ids:
+
+                id_coords = []
+                column_coords = {}
+                for i, id in enumerate(ids):
+                    x, y = corners[i][0][0]
+                    id_coords.append((id[0], x, y))
+                    if x not in column_coords:
+                        column_coords[x] = []
+                    column_coords[x].append((id[0], y))
+                    
+                id_coords = []
+                for column, coords in column_coords.items():
+                    coords = sorted(coords, key=lambda x: x[1], reverse=True)
+                    for coord in coords:
+                        id_coords.append((coord[0], column))
+                        
+                sorted_ids = [id[0] for id in id_coords]
+
+                for id in sorted_ids:
                     for cell in self.board.cells:
                         cell.draw_active_cell(frame, self.background_color)
-                        cell.check_for_markers(self.my_markers[id[0]])
+                        cell.check_for_markers(self.my_markers[id])
 
-                    # if id[0] not in printed_ids:
-                    #     # label1_text += str(id[0]) + " "
-                    #     label1_text += str(self.my_markers[id[0]].get_data()) + " "
-                    #     self.label1.config(text=label1_text)
-                    #     printed_ids.add(id[0])
-
-                    # Sort the detected markers from right to left based on their X coordinate
-                    id_coords = []
-                    for i, id in enumerate(ids):
-                        x, y = corners[i][0][0]
-                        id_coords.append((id[0], x))
-                    id_coords = sorted(id_coords, key=lambda x: x[1], reverse=True)
-                    sorted_ids = [id[0] for id in id_coords]
-                    
-                    for id in sorted_ids:
-                        for cell in self.board.cells:
-                            cell.draw_active_cell(frame, self.background_color)
-                            cell.check_for_markers(self.my_markers[id])
-
-                        if id not in printed_ids:
-                            label1_text += str(self.my_markers[id].get_data()) + " "
-                            self.label1.config(text=label1_text)
-                            printed_ids.add(id)
+                    if id not in printed_ids:
+                        label1_text += str(self.my_markers[id].get_data()) + " "
+                        self.label1.config(text=label1_text)
+                        printed_ids.add(id)
                     
                     
             frame = cv2.flip(frame, 1)
@@ -177,12 +177,38 @@ class Display(metaclass=singleton.SingletonMeta):
         '''
         detected_ids = [id[0] for id in ids]
 
-        for id in detected_ids:
-            self.my_markers[id].update_marker(corners[detected_ids.index(id)][0], ids[detected_ids.index(id)])
-            # if self.my_markers[id].is_visible:
-            self.my_markers[id].draw_marker(image, self.primary_color)
+        # Update the observer with whichever markers are visible
+        for marker in self.my_markers:
+            if marker.get_id() not in detected_ids:
+                marker.is_visible = False
+                marker.update_visibility()
+                break
+
+        # label2_text = " ".join(str(self.my_markers[id].get_memory().keys) for id in detected_ids if not self.my_markers[id].is_cursor)
+        # self.label2.config(text=label2_text)
+        
+        for id, (corner, marker_id) in zip(detected_ids, zip(corners, ids)):
+            marker = self.my_markers[id]
+            marker.is_visible = True
+            marker.update_marker(corner[0], marker_id)
+            marker.draw_marker(image, self.primary_color)
+            if marker.is_cursor == False:
+                for key in marker.get_memory().keys():
+                    if key != 'data':
+                        print(key)
 
         return image
     
     def set_marker_list(self, my_markers_):
         self.my_markers = my_markers_
+
+    def get_visible_markers(self):
+        visible_markers = []
+        for marker in self.my_markers:
+            if marker.is_visible:
+                visible_markers.append(marker)
+        return visible_markers
+    
+    def update(self, gesture_name):
+        self.output_label.config(text=gesture_name)
+        self.root.update()

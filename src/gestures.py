@@ -13,9 +13,7 @@ class Gesture:
         self.execute_behavior = None
 
     def execute(self, active_data_markers_):
-        if self.found:
-            self.execute_behavior.execute(active_data_markers_)
-            self.found = False
+        self.execute_behavior.execute(active_data_markers_)
     def attach_observer(self, observer):
         self.observers.append(observer)
     def notify_observers(self):
@@ -70,6 +68,9 @@ class Gesture:
     def set_found(self, found_):
         self.found = found_
 
+    def update_display(self, display_):
+        display_.update(self.shape_name)
+
 #------------------------------------------------------------#
 
 class ClockwiseCircleGesture(Gesture):
@@ -83,7 +84,7 @@ class ClockwiseCircleGesture(Gesture):
 class CounterClockwiseCircleGesture(Gesture):
     def __init__(self, shape_multiplier_=1):
         super().__init__(shape_multiplier_)
-        self.shape = ["←", "↓", "→", "↑"]
+        self.shape = ["→", "↑", "←", "↓"]
         self.shape_name = "Counter-Clockwise Circle"
         self.needs_return_cell = True
         self.execute_behavior = gestureBehavior.SplitBehavior()

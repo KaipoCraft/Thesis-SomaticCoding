@@ -34,6 +34,7 @@ class PrintBehavior(GestureBehavior):
         self.function_name = "print"
     
     def function(self, markers_):
+        super().function(markers_)
         # check last memory, if it's start then skip
         last_key = None
         for marker in markers_:
@@ -50,11 +51,12 @@ class ConcatBehavior(GestureBehavior):
     def __init__(self):
         self.function_name = "concatenate"
     
-    def function(self, markers_):
-        output_string = []
-        for marker in markers_:
-            output_string.append(marker.get_data())
-        print(output_string)
+    def function(self, active_data_markers_):
+        super().function(active_data_markers_)
+        output_string = ""
+        for marker in active_data_markers_:
+            # output_string.append(marker.get_data())
+            output_string += marker.get_data()
         return output_string
 
 class SplitBehavior(GestureBehavior):
@@ -62,6 +64,7 @@ class SplitBehavior(GestureBehavior):
         self.function_name = "split"
 
     def function(self, markers_):
+        super().function(markers_)
         for marker in markers_:
             for key, value in reversed(list(marker.memory.items())):
                 if key == "concatenate":
@@ -77,6 +80,7 @@ class CallChatGPTBehavior(GestureBehavior):
         self.function_name = "Chat GPT call"
 
     def function(self, markers_):
+        super().function(markers_)
         import openai
         openai.api_key = "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"
 
@@ -96,6 +100,7 @@ class UndoBehavior(GestureBehavior):
         self.function_name = "undo"
 
     def function(self, markers_):
+        super().function(markers_)
         # check last memory, if it's start then skip
         last_key = None
         for marker in markers_:
@@ -115,4 +120,5 @@ class GetTypeBehavior(GestureBehavior):
         self.function_name = "get type"
 
     def function(self, markers_):
+        super().function(markers_)
         print(data)

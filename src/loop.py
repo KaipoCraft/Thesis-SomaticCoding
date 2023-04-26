@@ -1,5 +1,3 @@
-import cv2
-from cv2 import aruco
 import tkinter as tk
 
 import observer
@@ -35,6 +33,7 @@ class Loop(metaclass=singleton.SingletonMeta):
         # Iterate through the marker dictionary and make each marker object based on the dictionary
         self.my_markers = factory.MarkerFactory.make_markers(self.marker_dict, self.history_length)
         self.gesture_observer = observer.Executioner(self.my_markers)
+        self.gesture_observer.display_observer = self.display
         # Attach our observer to the markers
         for marker in self.my_markers:
             marker.attach_observer(self.gesture_observer)

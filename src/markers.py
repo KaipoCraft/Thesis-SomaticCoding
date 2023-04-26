@@ -26,12 +26,6 @@ class Marker(ABC):
 
     def update_marker(self, corners, ids):
         self.marker_center = self.calculate_center(corners)
-        for id in ids:
-            # print(int(id))
-            if self.get_id() == int(id):
-                self.is_visible = True
-            else:
-                self.is_visible = False
 
     def calculate_center(self, corners):
         # Get the center of the marker
@@ -60,6 +54,10 @@ class Marker(ABC):
             self.current_cell = None
         else:
             self.current_cell = [int(x) for x in cell_id.split(",")]
+
+    def update_visibility(self):
+        for observer in self.marker_observers:
+            observer.update_visibility(self)
 
 #------------------------------------------------------------#
 
@@ -95,33 +93,36 @@ class CursorMarker(Marker):
         super().update_marker(corners, ids)
         if self.current_cell is not None:
             self.build_history()
-            if len(self.direction_history) > self.history_length:
+            if len(self.direction_history) >= self.history_length:
                 self.notify_observers()
                 self.direction_history = []
                 self.cell_history = []
-    
+
     def build_history(self):
+        # If this is the first cell, set the previous cell to the current cell and return
         if self.previous_cell is None:
             self.previous_cell = self.current_cell
-        elif self.current_cell != self.previous_cell:
-            dir_x = self.current_cell[0] - self.previous_cell[0]
-            dir_y = self.current_cell[1] - self.previous_cell[1]
-
-            dx = calculations.get_sign(dir_x)
-            dy = calculations.get_sign(dir_y)
-
-            if (dx, dy) in self.direction_dict.keys():
-                direction = self.direction_dict[(dx, dy)]
-                if len(self.direction_history) <= self.history_length:
-                    self.direction_history.append(direction)
-                    self.cell_history.append(self.current_cell)
-                else:
-                    self.direction_history.pop(0)
-                    self.cell_history.pop(0)
-                    self.direction_history.append(direction)
-                    self.cell_history.append(self.current_cell)
-            
-                self.previous_cell = self.current_cell
+            return
+        # If the current cell is the same as the previous cell, return
+        if self.current_cell == self.previous_cell:
+            return
+        # Calculate the direction of movement
+        dir_x, dir_y = self.current_cell[0] - self.previous_cell[0], self.current_cell[1] - self.previous_cell[1]
+        dx, dy = calculations.get_sign(dir_x), calculations.get_sign(dir_y)
+        # If the direction of movement is not a valid key in the direction dictionary, return
+        if (dx, dy) not in self.direction_dict.keys():
+            return
+        # Get the direction corresponding to the direction of movement
+        direction = self.direction_dict[(dx, dy)]
+        # If the length of the direction history is greater than or equal to the maximum length, remove the oldest direction and cell
+        if len(self.direction_history) >= self.history_length:
+            self.direction_history.pop(0)
+            self.cell_history.pop(0)
+        # Add the current direction and cell to the end of the direction history and cell history, respectively
+        self.direction_history.append(direction)
+        self.cell_history.append(self.current_cell)
+        # Set the previous cell to the current cell
+        self.previous_cell = self.current_cell
 
     def set_movement_history(self, direction_history, cell_history):
         self.direction_history = direction_history
@@ -142,7 +143,7 @@ class DataMarker(Marker):
     
     def notify_observers(self):
         for observer in self.marker_observers:
-            observer.set_active_data_markers()
+            observer.update_visibility(self)
 
     def write_data(self, function, result):
         self.memory[function] = result
