@@ -46,11 +46,12 @@ grid_size = 6 # amount of cells rows, columns are variable depending on camera r
 primary_color = (140, 125, 110)
 background_color = (230, 230, 230)
 gesture_history_length = 10
+camera = 1
 
 # import the camera matrix and distortion coefficients
-camera_matrix, dist_coeffs = calibration.calibrate.Calibrator(0, file_name='camera_calibration_nexigo').get_matrix()
+camera_matrix, dist_coeffs = calibration.calibrate.Calibrator(camera, file_name='camera_calibration_nexigo').get_matrix()
 
 # Create the main object and generate the markers
-loop_ = loop.Loop(primary_color, grid_size, marker_dict, aruco_dict, parameters, marker_size, camera_matrix, dist_coeffs, gesture_history_length=gesture_history_length, background_color=background_color)
+loop_ = loop.Loop(camera, primary_color, grid_size, marker_dict, aruco_dict, parameters, marker_size, camera_matrix, dist_coeffs, gesture_history_length=gesture_history_length, background_color=background_color)
 loop_.setup()
 loop_.run()
