@@ -36,6 +36,7 @@ class Display(metaclass=singleton.SingletonMeta):
         self.cap = cv2.VideoCapture(0)
 
         # self.printed_ids = set()
+        self.output_data = ""
 
     def setup(self):
         # Create a frame to hold the canvas widget
@@ -54,16 +55,16 @@ class Display(metaclass=singleton.SingletonMeta):
 
         # Create label widgets to display additional information
         # self.label1_text = ""
-        self.label1 = tk.Label(label_frame, text="Structure: ", bg=self.background_color_tkinter, font=("Helvetica", 30), wraplength=self.screen_width*1/3-10)
+        self.label1 = tk.Label(label_frame, text="Structure: ", bg=self.background_color_tkinter, font=("Helvetica", 30), width=int(self.screen_width*1/3-10), wraplength=self.screen_width*1/3-10)
         self.label1.config(justify=tk.LEFT)
         self.label1.pack(side=tk.TOP, fill=tk.X, padx=10, pady=50)
 
         self.label2_text = ""
-        self.label2 = tk.Label(label_frame, text=self.label2_text, bg=self.background_color_tkinter, font=("Helvetica", 30), wraplength=self.screen_width*1/3-10)
+        self.label2 = tk.Label(label_frame, text=self.label2_text, bg=self.background_color_tkinter, font=("Helvetica", 30), width=int(self.screen_width*1/3-10), wraplength=self.screen_width*1/3-10)
         self.label2.config(justify=tk.LEFT)
         self.label2.pack(side=tk.TOP, fill=tk.X, padx=10, pady=50)
 
-        self.output_label_text = "Output"
+        self.output_label_text = "Output: " + self.output_data
         self.output_label = tk.Label(label_frame, text=self.output_label_text, bg="black", fg="white", font=("Helvetica", 30), wraplength=self.screen_width*1/3-10)
         self.output_label.config(justify=tk.LEFT)
         self.output_label.pack(side=tk.BOTTOM, fill=tk.X, padx=10, pady=60)
@@ -118,10 +119,12 @@ class Display(metaclass=singleton.SingletonMeta):
                         cell.check_for_markers(self.my_markers[id])
 
                     if id not in printed_ids:
-                        label1_text += str(self.my_markers[id].get_data()) + " "
-                        self.label1.config(text=label1_text)
-                        printed_ids.add(id)
-                    
+                        if self.my_markers[id].get_data() == None:
+                            pass
+                        else:
+                            label1_text += str(self.my_markers[id].get_data()) + "\n"
+                            self.label1.config(text=label1_text)
+                            printed_ids.add(id)
                     
             frame = cv2.flip(frame, 1)
             
@@ -137,7 +140,6 @@ class Display(metaclass=singleton.SingletonMeta):
             try:
                 # Update the canvas with the new image
                 self.canvas.imgtk = imgtk
-
                 self.canvas.create_image(x, y, anchor=tk.NW, image=imgtk)
                 
             except tk.TclError as e:
@@ -192,10 +194,10 @@ class Display(metaclass=singleton.SingletonMeta):
             marker.is_visible = True
             marker.update_marker(corner[0], marker_id)
             marker.draw_marker(image, self.primary_color)
-            if marker.is_cursor == False:
-                for key in marker.get_memory().keys():
-                    if key != 'data':
-                        print(key)
+            # if marker.is_cursor == False:
+            #     for key in marker.get_memory().keys():
+            #         if key != 'data':
+            #             print(key)
 
         return image
     
@@ -209,6 +211,7 @@ class Display(metaclass=singleton.SingletonMeta):
                 visible_markers.append(marker)
         return visible_markers
     
-    def update(self, gesture_name):
-        self.output_label.config(text=gesture_name)
+    def update(self, function_name, altered_data):
+        self.output_data = altered_data
+        self.output_label.config(text=function_name + "\n" + self.output_data)
         self.root.update()

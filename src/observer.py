@@ -17,15 +17,18 @@ class Executioner(metaclass=singleton.SingletonMeta):
             gesture_object.check_for_gesture(movement_history_, cell_history_)
             # If the gesture has been found, execute the corresponding command and stop looking for new gestures
             if gesture_object.found:
-                gesture_object.execute(self.visible_data_markers)
-                self.update_display(gesture_object.execute_behavior.function_name)
+                altered_data = gesture_object.execute(self.visible_data_markers)
+                self.display_observer.update(gesture_object.execute_behavior.function_name, altered_data)
                 gesture_found = True
                 break
             if gesture_found:
                 break
 
-    def update_display(self, gesture_name):
-        self.display_observer.update(gesture_name)
+    def print_to_display(self, text):
+        self.display_observer.update(text)
+
+    # def update_display(self, gesture_name):
+    #     self.display_observer.update(gesture_name)
     
     # Takes the detected gesture and executes the function associated with it
     # def execute(self, detected_gesture):

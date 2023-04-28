@@ -27,17 +27,18 @@ class GestureBehavior(ABC):
         pass
 
 #------------------------------------------------------------#
+#TODO alter these all so that they return the altered data to the display!
 
 # Users use the print function to see what the different data points are
 class PrintBehavior(GestureBehavior):
     def __init__(self):
         self.function_name = "print"
     
-    def function(self, markers_):
-        super().function(markers_)
+    def function(self, active_data_markers_):
+        super().function(active_data_markers_)
         # check last memory, if it's start then skip
         last_key = None
-        for marker in markers_:
+        for marker in active_data_markers_:
             last_key = list(marker.memory.keys())[-1]
             last_value = marker.memory[last_key]
             if last_key != "start":
@@ -63,9 +64,9 @@ class SplitBehavior(GestureBehavior):
     def __init__(self):
         self.function_name = "split"
 
-    def function(self, markers_):
-        super().function(markers_)
-        for marker in markers_:
+    def function(self, active_data_markers_):
+        super().function(active_data_markers_)
+        for marker in active_data_markers_:
             for key, value in reversed(list(marker.memory.items())):
                 if key == "concatenate":
                     # Get the string from the concatenate function
@@ -79,8 +80,8 @@ class CallChatGPTBehavior(GestureBehavior):
     def __init__(self):
         self.function_name = "Chat GPT call"
 
-    def function(self, markers_):
-        super().function(markers_)
+    def function(self, active_data_markers_):
+        super().function(active_data_markers_)
         import openai
         openai.api_key = "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"
 
@@ -99,11 +100,11 @@ class UndoBehavior(GestureBehavior):
     def __init__(self):
         self.function_name = "undo"
 
-    def function(self, markers_):
-        super().function(markers_)
+    def function(self, active_data_markers_):
+        super().function(active_data_markers_)
         # check last memory, if it's start then skip
         last_key = None
-        for marker in markers_:
+        for marker in active_data_markers_:
             last_key = list(marker.memory.keys())[-1]
             # last_value = marker.memory[last_key]
             if last_key == "undo":
@@ -119,6 +120,5 @@ class GetTypeBehavior(GestureBehavior):
     def __init__(self):
         self.function_name = "get type"
 
-    def function(self, markers_):
-        super().function(markers_)
-        print(data)
+    def function(self, active_data_markers_):
+        super().function(active_data_markers_)

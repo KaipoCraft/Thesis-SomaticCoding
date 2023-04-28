@@ -104,3 +104,39 @@ class VerticalLineGesture(Gesture):
         self.shape_name = "Vertical Line"
         self.needs_return_cell = False
         self.execute_behavior = gestureBehavior.UndoBehavior()
+
+class BottomLineGesture(Gesture):
+    def __init__(self, shape_multiplier_=1):
+        super().__init__(shape_multiplier_)
+        self.shape = ["↓", "↓", "↓"]
+        self.shape_name = "Bottom Line"
+        self.needs_return_cell = False
+        self.execute_behavior = gestureBehavior.CallChatGPTBehavior()
+
+    def check_for_gesture(self, movement_history_, cell_history_):
+        start_index = None
+
+        # Run through every movement in the movement history
+        for i in range(len(movement_history_)):
+            current_cell = cell_history_[i]
+            
+            # Check to see if we matched the shape
+            if len(self.tracked_movement) == len(self.shape):
+                print(f"{self.shape_name} found")
+                self.tracked_movement = []
+                self.found = True
+                break
+            # Else, we keep checking for the shape
+            else:
+                # The desired movement is the next movement in the shape
+                desired_movement = self.shape[len(self.tracked_movement)]
+
+                # If the movement in the history is the same as the desired movement and is in the bottom row, we add it to the tracked movement
+                if movement_history_[i] == desired_movement and current_cell[1] == 5:
+                    self.tracked_movement.append(movement_history_[i])
+                    if start_index is None:
+                        start_index = current_cell
+                # If the movement in the history is the opposite of the desired movement or is not in the bottom row, we reset the tracked movement
+                elif movement_history_[i] == self.opposite_dictionary[desired_movement] or current_cell[1] != 5:
+                    self.tracked_movement = []
+                    start_index = None

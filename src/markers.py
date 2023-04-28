@@ -147,7 +147,6 @@ class DataMarker(Marker):
 
     def write_data(self, function, result):
         self.memory[function] = result
-        print(self.memory)
 
     def get_memory(self):
         return self.memory

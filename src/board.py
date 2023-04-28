@@ -69,7 +69,7 @@ class Cell:
         '''
         if self.marker:
             if self.marker.is_cursor:
-                color = (0,0,244)
+                color = color_
             else:
                 color = (155,0,0)
             border_thickness = -1
@@ -93,14 +93,14 @@ class Cell:
         cv2.rectangle(image_, (int(self.x), int(self.y)), (int(self.x + self.size[0]-abs(border_thickness)), int(self.y + self.size[1]-abs(border_thickness))), color_, 1)
 
         # # calculate the size of the text
-        # text_size, _ = cv2.getTextSize(str(self.id), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 2)
+        text_size, _ = cv2.getTextSize(str(self.id), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 2)
 
         # # calculate the center of the bounding box of the text
-        # text_x = int(self.x + self.size[0] // 2 - text_size[0] // 2)
-        # text_y = int(self.y + self.size[1] // 2 + text_size[1] // 2)
+        text_x = int(self.x + self.size[0] // 2 - text_size[0] // 2)
+        text_y = int(self.y + self.size[1] // 2 + text_size[1] // 2)
 
         # # draw the text with the updated position
-        # cv2.putText(image_, str(self.id), (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color_, 1, cv2.LINE_AA)
+        cv2.putText(image_, str(self.id), (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color_, 1, cv2.LINE_AA)
         
         return image_
     
