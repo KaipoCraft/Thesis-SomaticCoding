@@ -7,7 +7,8 @@ import singleton
 
 # Abstract class that all displays will inherit from
 class Display(metaclass=singleton.SingletonMeta):
-    def __init__(self, aruco_dict_, params_, board_ : object, primary_color_, background_color_):
+    def __init__(self, camera, aruco_dict_, params_, board_ : object, primary_color_, background_color_):
+        self.camera = camera
         self.aruco_dict = aruco_dict_
         self.params = params_
         self.board = board_
@@ -33,7 +34,7 @@ class Display(metaclass=singleton.SingletonMeta):
         self.canvas = None
         
         # Initialize the OpenCV capture object
-        self.cap = cv2.VideoCapture(0)
+        self.cap = cv2.VideoCapture(self.camera)
 
         # self.printed_ids = set()
         self.output_data = ""
