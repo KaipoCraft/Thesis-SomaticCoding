@@ -46,7 +46,7 @@ grid_size = 6 # amount of cells rows, columns are variable depending on camera r
 primary_color = (140, 125, 110)
 background_color = (230, 230, 230)
 gesture_history_length = 10
-camera = 1
+camera = 0
 
 # import the camera matrix and distortion coefficients
 camera_matrix, dist_coeffs = calibration.calibrate.Calibrator(camera, file_name='camera_calibration_nexigo').get_matrix()

@@ -1,11 +1,13 @@
 from abc import ABC, abstractmethod
+import openai
+openai.api_key = "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"
 
 @abstractmethod
 class GestureBehavior(ABC):
     def __init__(self):
         self.function_name = None
 
-    #TODO for some reason, there are multiple objects instantiated when this runs
+    #TODO rework gesture behaviors to run gramatical trnaformations on the data
     def execute(self, active_data_markers):
         # # Take all the active data markers, get their data, and execute the function
         # data = []
@@ -122,3 +124,24 @@ class GetTypeBehavior(GestureBehavior):
 
     def function(self, active_data_markers_):
         super().function(active_data_markers_)
+
+
+
+
+
+class GrammarTransformationBehavior(GestureBehavior):
+    def __init__(self, transform_function):
+        self.transform_function = transform_function
+
+    def function(self, active_data_markers_):
+        super().function(active_data_markers_)
+        #TODO get the last value from the active marker's memory
+        
+        #TODO find out what it is grammatically (i.e. noun, verb, adjective, adverb)
+
+        # perform the grammatical transformation using the specified transform function
+        transformed_value = self.transform_function(last_value)
+        # update the marker's memory with the transformed value
+        active_data_markers_[-1].memory["transformed_value"] = transformed_value
+
+    def find_type(self, string):
