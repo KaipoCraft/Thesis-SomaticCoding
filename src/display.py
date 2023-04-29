@@ -123,7 +123,7 @@ class Display(metaclass=singleton.SingletonMeta):
                         if self.my_markers[id].get_data() == None:
                             pass
                         else:
-                            label1_text += str(self.my_markers[id].get_data()) + "\n"
+                            label1_text += str(self.my_markers[id].get_id()) + "\n"
                             self.label1.config(text=label1_text)
                             printed_ids.add(id)
                     
@@ -214,5 +214,5 @@ class Display(metaclass=singleton.SingletonMeta):
     
     def update(self, function_name, altered_data):
         self.output_data = altered_data
-        self.output_label.config(text=function_name + "\n" + self.output_data)
+        self.output_label.config(text=str(function_name) + "\n" + str(self.output_data))
         self.root.update()

@@ -3,11 +3,21 @@
 # Import the external depencdecies
 from cv2 import aruco
 import sys
+import argparse
 
 # Import the necessary local scripts
 import loop
 sys.path.insert(0, '..\calibration')
 import calibration.calibrate
+
+# Set up the command-line argument parser
+parser = argparse.ArgumentParser(description='Run the ARUCO marker detection program.')
+parser.add_argument('--camera', type=int, default=0, help='the index of the camera to use (default: 1)')
+parser.add_argument('--grid_size', type=int, default=6, help='the size of the grid (default: 6)')
+parser.add_argument('--file_name', type=str, default='camera_calibration_nexigo', help='the name of the file containing the camera calibration data (default: camera_calibration_nexigo)')
+
+# Parse the command-line arguments
+args = parser.parse_args()
 
 # Create the marker dictionary, which defines the string each marker corresponds to
 marker_dict = {
@@ -42,16 +52,14 @@ marker_dict = {
 aruco_dict = aruco.getPredefinedDictionary(aruco.DICT_6X6_50)
 parameters = aruco.DetectorParameters()
 marker_size = 100
-grid_size = 6 # amount of cells rows, columns are variable depending on camera resolution
 primary_color = (140, 125, 110)
 background_color = (230, 230, 230)
 gesture_history_length = 10
-camera = 1
 
 # import the camera matrix and distortion coefficients
-camera_matrix, dist_coeffs = calibration.calibrate.Calibrator(camera, file_name='camera_calibration_nexigo').get_matrix()
+camera_matrix, dist_coeffs = calibration.calibrate.Calibrator(args.camera, args.file_name).get_matrix()
 
 # Create the main object and generate the markers
-loop_ = loop.Loop(camera, primary_color, grid_size, marker_dict, aruco_dict, parameters, marker_size, camera_matrix, dist_coeffs, gesture_history_length=gesture_history_length, background_color=background_color)
+loop_ = loop.Loop(args.camera, primary_color, args.grid_size, marker_dict, aruco_dict, parameters, marker_size, camera_matrix, dist_coeffs, gesture_history_length=gesture_history_length, background_color=background_color)
 loop_.setup()
 loop_.run()
