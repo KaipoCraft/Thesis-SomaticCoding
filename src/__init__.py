@@ -21,48 +21,49 @@ args = parser.parse_args()
 
 # Create the marker dictionary, which defines the string each marker corresponds to
 marker_dict = {
-    0: ("cursor"),
-    # Prefix
-    1: ("Pre"),
-    2: ("Re"),
-    3: ("Anti"),
-    4: ("De"),
-    5: ("Pro"),
-    6: ("Intra"),
-    # Root
-    7: ("state"),
-    8: ("click"),
-    9: ("scroll"),
-    10: ("zoom"),
-    11: ("drag"),
-    12: ("drop"),
-    # Suffix
-    13: ("select"),
-    14: ("deselect"),
-    15: ("undo"),
-    16: ("redo"),
-    17: ("copy"),
-    18: ("paste"),
-    # Other
-    19: ("cut"),
-    20: ("delete"),
-    21: ("open"),
-    22: ("close"),
-    23: ("save"),
-    24: ("save_as"),
-    25: ("new"),
-    26: ("print"),
-    27: ("find"),
-    28: ("replace"),
-    29: ("exit"),
-    30: ("help"),
-    31: ("settings"),
-    32: ("preferences"),
-    33: ("about"),
-    34: ("quit"),
-    35: ("file"),
-    36: ("edit"),
-    37: ("view")
+    0: ["cursor", "cursor"],
+    # Nouns
+    1: ["bicycle", "noun"],
+    2: ["elephant", "noun"],
+    3: ["car", "noun"],
+    4: ["dog", "noun"],
+    5: ["cat", "noun"],
+    6: ["house", "noun"],
+    # Verbs
+    7: ["run", "verb"],
+    8: ["jump", "verb"],
+    9: ["walk", "verb"],
+    10: ["talk", "verb"],
+    11: ["eat", "verb"],
+    12: ["drink", "verb"],
+    # Adjectives
+    13: ["big", "adjective"],
+    14: ["small", "adjective"],
+    15: ["tall", "adjective"],
+    16: ["short", "adjective"],
+    17: ["fast", "adjective"],
+    18: ["slow", "adjective"],
+    # Noun-Professtions
+    19: ["doctor", "noun"],
+    20: ["teacher", "noun"],
+    21: ["lawyer", "noun"],
+    22: ["engineer", "noun"],
+    23: ["scientist", "noun"],
+    24: ["programmer", "noun"],
+    # Colors
+    25: ["red", "adjective"],
+    26: ["orange", "adjective"],
+    27: ["yellow", "adjective"],
+    28: ["green", "adjective"],
+    29: ["blue", "adjective"],
+    30: ["purple", "adjective"],
+    # Action verbs
+    31: ["play", "verb"],
+    32: ["sleep", "verb"],
+    33: ["study", "verb"],
+    34: ["work", "verb"],
+    35: ["read", "verb"],
+    36: ["write", "verb"],
 }
 
 # Create the marker dictionary, which will be used to store the markers once they're visible

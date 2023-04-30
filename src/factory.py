@@ -27,10 +27,12 @@ class MarkerFactory:
     def make_markers(marker_dict_, history_length_):
         marker_list = []
         for marker_id, data in marker_dict_.items():
-            if data == 'cursor':
+            if data[0] == 'cursor':
                 marker_list.append(markers.CursorMarker(marker_id, data, history_length_))
             else:
-                marker_list.append(markers.DataMarker(marker_id, data))
+                string = data[0]
+                data_type = data[1]
+                marker_list.append(markers.DataMarker(marker_id, string, data_type))
         return marker_list
 
 #------------------------------------------------------------#

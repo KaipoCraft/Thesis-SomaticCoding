@@ -87,6 +87,7 @@ class CursorMarker(Marker):
     def notify_observers(self):
         #TODO change so that the marker only notifies the Executioner when the history gets full
         for observer in self.marker_observers:
+            print("Cursor notifying observers")
             observer.update(self.direction_history, self.cell_history)
     
     def update_marker(self, corners, ids):
@@ -129,14 +130,15 @@ class CursorMarker(Marker):
         self.cell_history = cell_history
             
 class DataMarker(Marker):
-    def __init__(self, marker_id, data):
+    def __init__(self, marker_id, data, data_type):
         super().__init__(marker_id, data)
+        self.og_data = data
         self.data = data
         self.has_data = True
         # Holds the changes made to the data
         # A dictionary of the function and the result
-        self.memory = {"data": self.data}
-        self.data_type = None
+        # self.memory = {"data": self.data}
+        self.data_type = data_type
 
     def update_marker(self, corners, ids):
         super().update_marker(corners, ids)
@@ -146,8 +148,14 @@ class DataMarker(Marker):
         for observer in self.marker_observers:
             observer.update_visibility(self)
 
-    def write_data(self, function, result):
-        self.memory[function] = result
+    def write_data(self, result):
+        self.data = result
 
     def get_memory(self):
         return self.memory
+    
+    def get_data_type(self):
+        return self.data_type
+    
+    def set_data(self, data):
+        self.data = data

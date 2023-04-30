@@ -212,7 +212,8 @@ class Display(metaclass=singleton.SingletonMeta):
                 visible_markers.append(marker)
         return visible_markers
     
-    def update(self, function_name, altered_data):
+    def update_output(self, function_name, altered_data):
+        # Change so it just says stuff when the "AddToOutput" function is called
         self.output_data = altered_data
-        self.output_label.config(text=str(function_name) + "\n" + str(self.output_data))
+        self.output_label.config(str(self.output_data))
         self.root.update()
