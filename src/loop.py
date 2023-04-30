@@ -42,6 +42,8 @@ class Loop(metaclass=singleton.SingletonMeta):
 
         self.display.set_marker_list(self.my_markers)
         self.display.setup()
+
+        self.gesture_observer.attach_observer(self.display)
     
     def run(self):
         self.display.run()

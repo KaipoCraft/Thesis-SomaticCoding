@@ -16,8 +16,9 @@ class Cell:
         self.is_empty = True
         self.size = size
         self.marker = None
+        self.has_marker = False
         # self.observers = []
-        self.neighbors = ((self.x-1, self.y), (self.x, self.y-1), (self.x+1, self.y), (self.x, self.y+1)) # Left, Top, Right, Bottom
+        # self.neighbors = ((self.x-1, self.y), (self.x, self.y-1), (self.x+1, self.y), (self.x, self.y+1)) # Left, Top, Right, Bottom
 
     # def attach_observer(self, observer):
     #     self.observers.append(observer)
@@ -35,8 +36,14 @@ class Cell:
         '''
         if marker.marker_center[0] > self.x and marker.marker_center[0] < self.x + self.size[0] and marker.marker_center[1] > self.y and marker.marker_center[1] < self.y + self.size[1]:
             self.marker_detected(marker)
+            self.has_marker = True
+            return True
         elif self.marker != None:
             self.marker_removed()
+            self.has_marker = False
+            return False
+        else:
+            return False
 
     def marker_detected(self, marker):
         '''
@@ -69,9 +76,9 @@ class Cell:
         '''
         if self.marker:
             if self.marker.is_cursor:
-                color = color_
+                color = (155, 29, 32)
             else:
-                color = (155,0,0)
+                color = (61, 43, 61)
             border_thickness = -1
 
             # overlay = image_.copy()
@@ -93,14 +100,14 @@ class Cell:
         cv2.rectangle(image_, (int(self.x), int(self.y)), (int(self.x + self.size[0]-abs(border_thickness)), int(self.y + self.size[1]-abs(border_thickness))), color_, 1)
 
         # # calculate the size of the text
-        text_size, _ = cv2.getTextSize(str(self.id), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 2)
+        # text_size, _ = cv2.getTextSize(str(self.id), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 2)
 
         # # calculate the center of the bounding box of the text
-        text_x = int(self.x + self.size[0] // 2 - text_size[0] // 2)
-        text_y = int(self.y + self.size[1] // 2 + text_size[1] // 2)
+        # text_x = int(self.x + self.size[0] // 2 - text_size[0] // 2)
+        # text_y = int(self.y + self.size[1] // 2 + text_size[1] // 2)
 
         # # draw the text with the updated position
-        cv2.putText(image_, str(self.id), (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color_, 1, cv2.LINE_AA)
+        # cv2.putText(image_, str(self.id), (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color_, 1, cv2.LINE_AA)
         
         return image_
     

@@ -37,7 +37,7 @@ class Display(metaclass=singleton.SingletonMeta):
         self.cap = cv2.VideoCapture(self.camera)
 
         # self.printed_ids = set()
-        self.output_data = ""
+        self.output_data = None
 
     def setup(self):
         # Create a frame to hold the canvas widget
@@ -56,17 +56,17 @@ class Display(metaclass=singleton.SingletonMeta):
 
         # Create label widgets to display additional information
         # self.label1_text = ""
-        self.label1 = tk.Label(label_frame, text="Structure: ", bg=self.background_color_tkinter, font=("Helvetica", 30), width=int(self.screen_width*1/3-10), wraplength=self.screen_width*1/3-10)
+        self.label1 = tk.Label(label_frame, text="", bg=self.background_color_tkinter, fg=self.primary_color_tkinter, font=("Helvetica", 30), width=int(self.screen_width*1/3-10), wraplength=self.screen_width*1/3-10)
         self.label1.config(justify=tk.LEFT)
         self.label1.pack(side=tk.TOP, fill=tk.X, padx=10, pady=50)
 
         self.label2_text = ""
-        self.label2 = tk.Label(label_frame, text=self.label2_text, bg=self.background_color_tkinter, font=("Helvetica", 30), width=int(self.screen_width*1/3-10), wraplength=self.screen_width*1/3-10)
+        self.label2 = tk.Label(label_frame, text=self.label2_text, bg=self.background_color_tkinter, fg=self.primary_color_tkinter, font=("Helvetica", 30), width=int(self.screen_width*1/3-10), wraplength=self.screen_width*1/3-10)
         self.label2.config(justify=tk.LEFT)
         self.label2.pack(side=tk.TOP, fill=tk.X, padx=10, pady=50)
 
-        self.output_label_text = "Output: " + self.output_data
-        self.output_label = tk.Label(label_frame, text=self.output_label_text, bg="black", fg="white", font=("Helvetica", 30), wraplength=self.screen_width*1/3-10)
+        self.output_label_text = self.output_data
+        self.output_label = tk.Label(label_frame, text=self.output_label_text, bg=self.primary_color_tkinter, fg="white", font=("Helvetica", 30), wraplength=self.screen_width*1/3-10)
         self.output_label.config(justify=tk.LEFT)
         self.output_label.pack(side=tk.BOTTOM, fill=tk.X, padx=10, pady=60)
 
@@ -97,35 +97,24 @@ class Display(metaclass=singleton.SingletonMeta):
                 # Process the markers
                 self.process_markers(corners, ids, frame)
 
-                id_coords = []
-                column_coords = {}
-                for i, id in enumerate(ids):
-                    x, y = corners[i][0][0]
-                    id_coords.append((id[0], x, y))
-                    if x not in column_coords:
-                        column_coords[x] = []
-                    column_coords[x].append((id[0], y))
-                    
-                id_coords = []
-                for column, coords in column_coords.items():
-                    coords = sorted(coords, key=lambda x: x[1], reverse=True)
-                    for coord in coords:
-                        id_coords.append((coord[0], column))
-                        
-                sorted_ids = [id[0] for id in id_coords]
+                visible_marker_data = []
 
-                for id in sorted_ids:
+                for id in ids:
+                    id = id[0]
                     for cell in self.board.cells:
-                        cell.draw_active_cell(frame, self.background_color)
-                        cell.check_for_markers(self.my_markers[id])
+                        inhabited = cell.check_for_markers(self.my_markers[id])
+                        if inhabited:
+                            cell.draw_active_cell(frame, self.background_color)
 
-                    if id not in printed_ids:
-                        if self.my_markers[id].get_data() == None:
-                            pass
-                        else:
-                            label1_text += str(self.my_markers[id].get_id()) + "\n"
-                            self.label1.config(text=label1_text)
-                            printed_ids.add(id)
+                    # if id not in printed_ids:
+                    if self.my_markers[id].get_data() == None:
+                        pass
+                    else:
+                        # label1_text += str(self.my_markers[id].get_data()) # + "\n"
+                        visible_marker_data.append(self.my_markers[id].get_data())
+                        label1_text = " ".join(visible_marker_data)
+                        self.label1.config(text=label1_text)
+                        # printed_ids.add(id)
                     
             frame = cv2.flip(frame, 1)
             
@@ -212,8 +201,30 @@ class Display(metaclass=singleton.SingletonMeta):
                 visible_markers.append(marker)
         return visible_markers
     
-    def update_output(self, function_name, altered_data):
+    def update_output(self, data_):
         # Change so it just says stuff when the "AddToOutput" function is called
-        self.output_data = altered_data
-        self.output_label.config(str(self.output_data))
+        self.output_data = data_
+        self.output_label.config(text=str(self.output_data))
         self.root.update()
+
+    def sort_markers(self):
+        marker_location_dict = {}
+        # Get the marker coordinates
+        for cell in self.board.cells:
+            if cell.has_marker:
+                print(cell.x, cell.y)
+                marker_location_dict[cell.marker.get_id()] = [cell.x, cell.y]
+        # Sort the markers by their x coordinate
+        sorted_markers = sorted(marker_location_dict.items(), key=lambda x: x[1][0])
+        # Sort the markers with the same x coordinate by their y coordinate
+        for i in range(len(sorted_markers)):
+            if sorted_markers[i][1][0] == sorted_markers[i+1][1][0]:
+                sorted_markers = sorted(sorted_markers[i:i+2], key=lambda x: x[1][1])
+        # Remove the coordinates from the list
+        sorted_markers = [marker[0] for marker in sorted_markers]
+        # Return the sorted markers
+        print(sorted_markers)
+        return sorted_markers
+    
+    def get_output(self):
+        return self.output_data

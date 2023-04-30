@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import openai
 import random
-openai.api_key = "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"
+openai.api_key = "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"
 
 @abstractmethod
 class GestureBehavior(ABC):
@@ -155,7 +155,10 @@ class GrammarTransformationBehavior(GestureBehavior):
         }
 
     def function(self, active_data_markers_, display_):
+        print("GrammarTransformationBehavior")
         super().function(active_data_markers_)
+        if len(active_data_markers_) == 0:
+            return
         transformed_data = []
         # run through each marker
         for marker in active_data_markers_:
@@ -219,12 +222,21 @@ class AddToOutputBehavior(GestureBehavior):
         for marker in active_data_markers_:
             output.append(marker.get_data())
         output_string = " ".join(output)
+        print(output_string)
         display_.update_output(output_string)
 
 class RunOutputBehavior(GestureBehavior):
     def __init__(self) -> None:
         self.function_name = "run output"
     
-    def function(self, active_data_markers_):
-        #TODO run the output
-        pass
+    def function(self, active_data_markers_, display_):
+        output_string = display_.get_output()
+        if output_string != None:
+            prompt = f"Please write a short poem inspired by this prompt: {output_string}."
+            model = "text-davinci-003"
+            response = openai.Completion.create(engine=model, prompt=prompt, max_tokens=25, temperature=0.9, n=1, stop=None)
+            transformed_data = response.choices[0].text.strip()
+            display_.update_output(transformed_data)
+        else:
+            output_string = "Please add some words to the output first."
+            display_.update_output(output_string)

@@ -87,7 +87,6 @@ class CursorMarker(Marker):
     def notify_observers(self):
         #TODO change so that the marker only notifies the Executioner when the history gets full
         for observer in self.marker_observers:
-            print("Cursor notifying observers")
             observer.update(self.direction_history, self.cell_history)
     
     def update_marker(self, corners, ids):

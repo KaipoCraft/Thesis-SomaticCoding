@@ -25,12 +25,13 @@ class Gesture:
 
     def check_for_gesture(self, movement_history_, cell_history_):
         start_index = None
+        print(movement_history_)
 
         # Run through every movement in the movement history
         for i in range(len(movement_history_)):
             
             # Check to see if we matched the shape
-            if len(self.tracked_movement) == len(self.shape):
+            if self.tracked_movement == self.shape:
                 # If we need to return to the start cell, we check to see if we are there
                 # if self.needs_return_cell:
                 #     if cell_history_[i] == start_index:

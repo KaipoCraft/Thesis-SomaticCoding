@@ -7,7 +7,12 @@ class Executioner(metaclass=singleton.SingletonMeta):
         self.markers = markers
         self.visible_data_markers = []
         self.display = None
-        self.gesture_list = [gestures.ClockwiseCircleGesture(), gestures.CounterClockwiseCircleGesture(), gestures.UnderlineGesture()]
+        self.gesture_list = [gestures.ClockwiseCircleGesture(), gestures.CounterClockwiseCircleGesture(), gestures.UnderlineGesture(), gestures.VerticalLineGesture()]
+
+    def attach_observer(self, display):
+        self.display = display
+    def notify_display(self, gesture_name):
+        self.display.update(gesture_name)
     
     def update(self, movement_history_, cell_history_):
         gesture_found = False
@@ -17,13 +22,12 @@ class Executioner(metaclass=singleton.SingletonMeta):
             gesture_object.check_for_gesture(movement_history_, cell_history_)
             # If the gesture has been found, execute the corresponding command and stop looking for new gestures
             if gesture_object.found:
-                altered_data = gesture_object.execute(self.visible_data_markers, self.display)
-                self.print_to_output(gesture_object.execute_behavior.function_name, altered_data)
+                gesture_object.execute(self.visible_data_markers, self.display)
                 gesture_found = True
                 break
 
-    def print_to_output(self, function_name, data):
-        self.display.update(function_name, data)
+    # def print_to_output(self, function_name, data):
+    #     self.display.update(function_name, data)
 
     # def update_display(self, gesture_name):
     #     self.display_observer.update(gesture_name)
