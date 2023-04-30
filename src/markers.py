@@ -136,6 +136,7 @@ class DataMarker(Marker):
         # Holds the changes made to the data
         # A dictionary of the function and the result
         self.memory = {"data": self.data}
+        self.data_type = None
 
     def update_marker(self, corners, ids):
         super().update_marker(corners, ids)

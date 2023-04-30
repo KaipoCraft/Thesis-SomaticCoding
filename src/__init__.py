@@ -43,6 +43,26 @@ marker_dict = {
     16: ("redo"),
     17: ("copy"),
     18: ("paste"),
+    # Other
+    19: ("cut"),
+    20: ("delete"),
+    21: ("open"),
+    22: ("close"),
+    23: ("save"),
+    24: ("save_as"),
+    25: ("new"),
+    26: ("print"),
+    27: ("find"),
+    28: ("replace"),
+    29: ("exit"),
+    30: ("help"),
+    31: ("settings"),
+    32: ("preferences"),
+    33: ("about"),
+    34: ("quit"),
+    35: ("file"),
+    36: ("edit"),
+    37: ("view")
 }
 
 # Create the marker dictionary, which will be used to store the markers once they're visible

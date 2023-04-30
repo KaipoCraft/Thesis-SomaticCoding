@@ -8,7 +8,7 @@ import os
 # Set the variables for the aruco markers
 dictionary_id = aruco.DICT_6X6_250
 marker_size = 100
-markers_num = 15
+markers_num = 37
 folder_name = "markers"
 folder_path = os.getcwd()
 
@@ -31,7 +31,7 @@ for i in range(markers_num):
     # Define the border size and color
     inner_border_size = 2
     inner_border_color = [0, 0, 0]
-    outer_border_size = 40
+    outer_border_size = 20
     outer_border_color = [255, 255, 255]
 
     # Add the borders to the marker

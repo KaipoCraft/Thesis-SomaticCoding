@@ -145,3 +145,5 @@ class GrammarTransformationBehavior(GestureBehavior):
         active_data_markers_[-1].memory["transformed_value"] = transformed_value
 
     def find_type(self, string):
+        #TODO find out what it is grammatically (i.e. noun, verb, adjective, adverb)
+        pass
