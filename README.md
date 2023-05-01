@@ -1,5 +1,7 @@
 # Thesis-SomaticCoding
 
+![The Physical Interface](references/title_image.png)
+
 ## About the Project
 `Somatic Coding` is a form of design that seeks to reintegrate the body into computing. This iteration, entitled `Gestural Syntax` is a program that uses fiducials and gesture recognition to run string manipulations for the purpose of constructing poems. This simple form of word play is the first iteration of Somatic Coding with the long-term goal to integrate gesture into the syntax of computing. Gestural Syntax begins incorporating movement into the syntax of code, but still makes use of symbolic language in the form of data held on the fiducials. This compromise was made in order to create a more accesible version of this program, since a gestural syntax sans symbolic language would require an immense complexity, thus making the program inaccessible.
 
