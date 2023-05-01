@@ -6,7 +6,8 @@
 `Somatic Coding` is a form of design that seeks to reintegrate the body into computing. This iteration, entitled `Gestural Syntax` is a program that uses fiducials and gesture recognition to run string manipulations for the purpose of constructing poems. This simple form of word play is the first iteration of Somatic Coding with the long-term goal to integrate gesture into the syntax of computing. Gestural Syntax begins incorporating movement into the syntax of code, but still makes use of symbolic language in the form of data held on the fiducials. This compromise was made in order to create a more accesible version of this program, since a gestural syntax sans symbolic language would require an immense complexity, thus making the program inaccessible.
 
 ### Project Video
-<iframe src="https://player.vimeo.com/video/822760830?h=36bb464b7a&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" width="1920" height="1080" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="neill-shikada__finalvid"></iframe>
+* If this link does not work, please see the video [here](https://vimeo.com/822760830)
+[![Project Video](https://i.vimeocdn.com/video/822760830.jpg)](https://vimeo.com/822760830)
 
 ## Dependencies
 Python 3.10.11
