@@ -32,7 +32,7 @@ python __init__.py
 ```
 
 ## Repo Structure
-
+```
 ├── env/                                    # VSCode generated ./env folder for the python virtual environment
 │   ├── Include/
 │   ├── Lib/
@@ -82,13 +82,13 @@ python __init__.py
 ├── README.md
 ├── requirements.txt                        # File listing the necessary libraries and versions to use (important since ArUco syntax has changed)
 └── SomaticCoding.code-workspace            # Coding workspace for VSCode
-
+```
 ## UML Diagrams
 
 ### Class Diagram
 
-![references/Thesis_ClassDiagram_Final.jpg]
+![Class Diagram](references/Thesis_ClassDiagram_Final.jpg)
 
 ### Activity Diagram
 
-![references/Thesis_ActivityDiagram.jpg]
+![Activity Diagram](references/Thesis_ActivityDiagram.jpg)
