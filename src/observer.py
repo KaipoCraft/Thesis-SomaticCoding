@@ -15,7 +15,6 @@ class Executioner(metaclass=singleton.SingletonMeta):
         self.display.update(gesture_name)
     
     def update(self, movement_history_, cell_history_):
-        gesture_found = False
         # Iterate through each gesture, checking to see if it has been found
         for gesture_object in self.gesture_list:
             # Run the check inside each gesture object
@@ -23,7 +22,7 @@ class Executioner(metaclass=singleton.SingletonMeta):
             # If the gesture has been found, execute the corresponding command and stop looking for new gestures
             if gesture_object.found:
                 gesture_object.execute(self.visible_data_markers, self.display)
-                gesture_found = True
+                gesture_object.found = False
                 break
 
     # def print_to_output(self, function_name, data):

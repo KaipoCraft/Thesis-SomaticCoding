@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import openai
 import random
-openai.api_key = "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"
+openai.api_key = "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"
 
 @abstractmethod
 class GestureBehavior(ABC):
@@ -231,12 +231,12 @@ class RunOutputBehavior(GestureBehavior):
     
     def function(self, active_data_markers_, display_):
         output_string = display_.get_output()
-        if output_string != None:
+        if output_string == None or output_string.isspace():
+            output_string = "Please add some words to the output first."
+            display_.update_output(output_string)
+        else:
             prompt = f"Please write a short poem inspired by this prompt: {output_string}."
             model = "text-davinci-003"
             response = openai.Completion.create(engine=model, prompt=prompt, max_tokens=25, temperature=0.9, n=1, stop=None)
             transformed_data = response.choices[0].text.strip()
             display_.update_output(transformed_data)
-        else:
-            output_string = "Please add some words to the output first."
-            display_.update_output(output_string)

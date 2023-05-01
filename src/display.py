@@ -211,7 +211,7 @@ class Display(metaclass=singleton.SingletonMeta):
         marker_location_dict = {}
         # Get the marker coordinates
         for cell in self.board.cells:
-            if cell.has_marker:
+            if not cell.is_empty:
                 print(cell.x, cell.y)
                 marker_location_dict[cell.marker.get_id()] = [cell.x, cell.y]
         # Sort the markers by their x coordinate

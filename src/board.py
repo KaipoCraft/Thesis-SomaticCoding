@@ -16,7 +16,6 @@ class Cell:
         self.is_empty = True
         self.size = size
         self.marker = None
-        self.has_marker = False
         # self.observers = []
         # self.neighbors = ((self.x-1, self.y), (self.x, self.y-1), (self.x+1, self.y), (self.x, self.y+1)) # Left, Top, Right, Bottom
 
@@ -36,11 +35,9 @@ class Cell:
         '''
         if marker.marker_center[0] > self.x and marker.marker_center[0] < self.x + self.size[0] and marker.marker_center[1] > self.y and marker.marker_center[1] < self.y + self.size[1]:
             self.marker_detected(marker)
-            self.has_marker = True
             return True
         elif self.marker != None:
             self.marker_removed()
-            self.has_marker = False
             return False
         else:
             return False
