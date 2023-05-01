@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import openai
 import random
-openai.api_key = "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"
+openai.api_key = "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"
 
 @abstractmethod
 class GestureBehavior(ABC):

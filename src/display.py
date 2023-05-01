@@ -73,8 +73,6 @@ class Display(metaclass=singleton.SingletonMeta):
     # Define the video capture loop
     def video_loop(self):
         label1_text = ""
-        label2_text = ""
-        printed_ids = set()
 
         ret, frame = self.cap.read()
         if ret:
@@ -174,22 +172,40 @@ class Display(metaclass=singleton.SingletonMeta):
         # detected_ids = [id[0] for id in ids]
         # label2_text = " ".join(str(self.my_markers[id].get_memory().keys) for id in detected_ids if not self.my_markers[id].is_cursor)
         # self.label2.config(text=label2_text)
+
+        cursor_marker = 0
         
-        for id, (corner, marker_id) in zip(ids, zip(corners, ids)):
-            marker = self.my_markers[id]
-            marker.is_visible = True
-            marker.update_marker(corner[0], marker_id)
-            marker.draw_marker(image, self.primary_color)
+
+        for corner, marker_id in zip(corners, ids):
+            marker = self.my_markers[marker_id]
+            marker.is_visible = False
+            if marker.get_id() == cursor_marker:
+                marker.is_visible = True
+                marker.update_marker(corner[0], marker_id)
+                marker.draw_marker(image, self.primary_color)
+            elif marker.get_id() in ids:
+                marker.is_visible = True
+                marker.update_marker(corner[0], marker_id)
+                marker.draw_marker(image, self.primary_color)
+            else:
+                marker.update_visibility()
+                
+        
+        # for id, (corner, marker_id) in zip(ids, zip(corners, ids)):
+        #     marker = self.my_markers[id]
+        #     marker.is_visible = True
+        #     marker.update_marker(corner[0], marker_id)
+        #     marker.draw_marker(image, self.primary_color)
             # if marker.is_cursor == False:
             #     for key in marker.get_memory().keys():
             #         if key != 'data':
             #             print(key)
 
         # Update the observer with whichever markers are visible
-        for marker in self.my_markers:
-            if marker.get_id() not in ids:
-                marker.is_visible = False
-                marker.update_visibility()
+        # for marker in self.my_markers:
+        #     if marker.get_id() not in ids:
+        #         marker.is_visible = False
+        #         marker.update_visibility()
                 # break
 
         return image
