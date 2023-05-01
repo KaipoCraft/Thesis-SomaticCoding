@@ -5,6 +5,9 @@
 ## About the Project
 `Somatic Coding` is a form of design that seeks to reintegrate the body into computing. This iteration, entitled `Gestural Syntax` is a program that uses fiducials and gesture recognition to run string manipulations for the purpose of constructing poems. This simple form of word play is the first iteration of Somatic Coding with the long-term goal to integrate gesture into the syntax of computing. Gestural Syntax begins incorporating movement into the syntax of code, but still makes use of symbolic language in the form of data held on the fiducials. This compromise was made in order to create a more accesible version of this program, since a gestural syntax sans symbolic language would require an immense complexity, thus making the program inaccessible.
 
+### Project Video
+[![Project Video](https://i.vimeocdn.com/video/822760830.jpg)](https://vimeo.com/822760830)
+
 ## Dependencies
 Python 3.10.11
 OpenCV 4.5.5.64
@@ -88,9 +91,7 @@ python __init__.py
 ## UML Diagrams
 
 ### Class Diagram
-
 ![Class Diagram](references/Thesis_ClassDiagram_Final.jpg)
 
 ### Activity Diagram
-
 ![Activity Diagram](references/Thesis_ActivityDiagram.jpg)
