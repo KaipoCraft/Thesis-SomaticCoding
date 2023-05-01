@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import openai
 import random
-openai.api_key = "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"
+openai.api_key = "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"
 
 @abstractmethod
 class GestureBehavior(ABC):
@@ -218,10 +218,11 @@ class AddToOutputBehavior(GestureBehavior):
         self.function_name = "add to output"
     
     def function(self, active_data_markers_, display_):
+        existing_string = display_.get_output()
         output = []
         for marker in active_data_markers_:
             output.append(marker.get_data())
-        output_string = " ".join(output)
+        output_string = existing_string + " " + " ".join(output)
         print(output_string)
         display_.update_output(output_string)
 

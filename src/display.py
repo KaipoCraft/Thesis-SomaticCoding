@@ -37,7 +37,7 @@ class Display(metaclass=singleton.SingletonMeta):
         self.cap = cv2.VideoCapture(self.camera)
 
         # self.printed_ids = set()
-        self.output_data = None
+        self.output_data = ""
 
     def setup(self):
         # Create a frame to hold the canvas widget
@@ -94,13 +94,16 @@ class Display(metaclass=singleton.SingletonMeta):
             frame = self.board.draw_board(frame, self.background_color, (self.video_feed_width, self.video_feed_height))
             # If we have detected a marker
             if ids is not None:
+                ids = [id[0] for id in ids]  # Extract the integers from the list of tuples
+                # ids.sort()  # Sort the list of integers in ascending order
+                
                 # Process the markers
                 self.process_markers(corners, ids, frame)
 
                 visible_marker_data = []
 
                 for id in ids:
-                    id = id[0]
+                    # id = id[0]
                     for cell in self.board.cells:
                         inhabited = cell.check_for_markers(self.my_markers[id])
                         if inhabited:
@@ -167,19 +170,12 @@ class Display(metaclass=singleton.SingletonMeta):
         Returns:
             image: the image with the markers drawn on it
         '''
-        detected_ids = [id[0] for id in ids]
-
-        # Update the observer with whichever markers are visible
-        for marker in self.my_markers:
-            if marker.get_id() not in detected_ids:
-                marker.is_visible = False
-                marker.update_visibility()
-                break
-
+        
+        # detected_ids = [id[0] for id in ids]
         # label2_text = " ".join(str(self.my_markers[id].get_memory().keys) for id in detected_ids if not self.my_markers[id].is_cursor)
         # self.label2.config(text=label2_text)
         
-        for id, (corner, marker_id) in zip(detected_ids, zip(corners, ids)):
+        for id, (corner, marker_id) in zip(ids, zip(corners, ids)):
             marker = self.my_markers[id]
             marker.is_visible = True
             marker.update_marker(corner[0], marker_id)
@@ -188,6 +184,13 @@ class Display(metaclass=singleton.SingletonMeta):
             #     for key in marker.get_memory().keys():
             #         if key != 'data':
             #             print(key)
+
+        # Update the observer with whichever markers are visible
+        for marker in self.my_markers:
+            if marker.get_id() not in ids:
+                marker.is_visible = False
+                marker.update_visibility()
+                # break
 
         return image
     

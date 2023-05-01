@@ -99,6 +99,7 @@ class CursorMarker(Marker):
                 self.cell_history = []
 
     def build_history(self):
+        print("Building history")
         # If this is the first cell, set the previous cell to the current cell and return
         if self.previous_cell is None:
             print("First cell")
@@ -109,10 +110,18 @@ class CursorMarker(Marker):
             return
         # Calculate the direction of movement
         dir_x, dir_y = self.current_cell[0] - self.previous_cell[0], self.current_cell[1] - self.previous_cell[1]
+        if abs(dir_x) == abs(dir_y):
+            print("Matching x and y")
+            self.previous_cell = self.current_cell
+            return
+        elif abs(dir_x) > abs(dir_y):
+            dir_y = 0
+        elif abs(dir_x) < abs(dir_y):
+            dir_x = 0
         dx, dy = calculations.get_sign(dir_x), calculations.get_sign(dir_y)
         # If the direction of movement is not a valid key in the direction dictionary, return
         if (dx, dy) not in self.direction_dict.keys():
-            print(dx, dy)
+            print("Still not found" + dx + ", " + dy)
             self.previous_cell = self.current_cell
             return
         # Get the direction corresponding to the direction of movement
