@@ -13,6 +13,7 @@
 Python 3.10.11
 OpenCV 4.5.5.64
 Numpy 1.24.2
+OpenAI
 
 ### Installation
 To install these dependencies, run this line in the terminal:
@@ -27,6 +28,7 @@ Numpy 1.24.2 should install automatically, but if not run:
 ```bash
 pip install numpy==1.24.2
 ```
+You also need to go to https://platform.openai.com/account/api-keys and create an API key to connect to OpenAI (you will also need an account). Remember to avoid uploading files to Github that contain your confidential API key as OpenAI will then delete that key as it has been leaked. Go to gestureBehavior.py to input the API key at the top of the script.
 
 ## Setup
 1. Set up a python virtual environment in VSCode
