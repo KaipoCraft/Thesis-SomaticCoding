@@ -96,23 +96,38 @@ class Display(metaclass=singleton.SingletonMeta):
                 # ids.sort()  # Sort the list of integers in ascending order
                 
                 # Process the markers
-                self.process_markers(corners, ids, frame)
+                # self.process_markers(corners, ids, frame)
 
                 visible_marker_data = []
 
-                for id in ids:
-                    # id = id[0]
+                for corner, marker_id in zip(corners, ids):
+                    corner = corner[0]
+                    marker = self.my_markers[marker_id]
+                    marker.calculate_center(corner)
+
+                    # Check which cell the marker is in and link the marker to the cell
                     for cell in self.board.cells:
-                        inhabited = cell.check_for_markers(self.my_markers[id])
+                        inhabited = cell.check_for_markers(marker)
                         if inhabited:
                             cell.draw_active_cell(frame, self.background_color)
+                    
+                    # if marker_id == 0:
+                    #     marker.is_visible = True
+                    #     marker.update_marker(marker_id)
+                    #     marker.draw_marker(frame, self.primary_color)
+                    if marker_id in ids:
+                        marker.is_visible = True
+                        marker.update_marker(marker_id)
+                        marker.draw_marker(frame, self.primary_color)
+                    else:
+                        marker.update_visibility()
 
                     # if id not in printed_ids:
-                    if self.my_markers[id].get_data() == None:
+                    if marker.get_data() == None:
                         pass
                     else:
                         # label1_text += str(self.my_markers[id].get_data()) # + "\n"
-                        visible_marker_data.append(self.my_markers[id].get_data())
+                        visible_marker_data.append(marker.get_data())
                         label1_text = " ".join(visible_marker_data)
                         self.label1.config(text=label1_text)
                         # printed_ids.add(id)
@@ -168,11 +183,6 @@ class Display(metaclass=singleton.SingletonMeta):
         Returns:
             image: the image with the markers drawn on it
         '''
-        
-        # detected_ids = [id[0] for id in ids]
-        # label2_text = " ".join(str(self.my_markers[id].get_memory().keys) for id in detected_ids if not self.my_markers[id].is_cursor)
-        # self.label2.config(text=label2_text)
-
         cursor_marker = 0
         
 
@@ -189,24 +199,7 @@ class Display(metaclass=singleton.SingletonMeta):
                 marker.draw_marker(image, self.primary_color)
             else:
                 marker.update_visibility()
-                
-        
-        # for id, (corner, marker_id) in zip(ids, zip(corners, ids)):
-        #     marker = self.my_markers[id]
-        #     marker.is_visible = True
-        #     marker.update_marker(corner[0], marker_id)
-        #     marker.draw_marker(image, self.primary_color)
-            # if marker.is_cursor == False:
-            #     for key in marker.get_memory().keys():
-            #         if key != 'data':
-            #             print(key)
-
-        # Update the observer with whichever markers are visible
-        # for marker in self.my_markers:
-        #     if marker.get_id() not in ids:
-        #         marker.is_visible = False
-        #         marker.update_visibility()
-                # break
+            
 
         return image
     

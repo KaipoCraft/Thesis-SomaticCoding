@@ -24,13 +24,11 @@ class Marker(ABC):
     def detach_observer(self, observer):
         self.marker_observers.remove(observer)
 
-    def update_marker(self, corners, ids):
-        self.marker_center = self.calculate_center(corners)
-
     def calculate_center(self, corners):
         # Get the center of the marker
-        center = np.mean(corners, axis=0)
-        return center
+        # corners = corners[0]
+        # print(corners)
+        self.marker_center = np.mean(corners, axis=0)
 
     def draw_marker(self, image, color):
         # Draw the center
@@ -89,17 +87,16 @@ class CursorMarker(Marker):
         for observer in self.marker_observers:
             observer.update(self.direction_history, self.cell_history)
     
-    def update_marker(self, corners, ids):
-        super().update_marker(corners, ids)
-        if self.current_cell is not None:
-            self.build_history()
-            if len(self.direction_history) >= self.history_length:
-                self.notify_observers()
-                self.direction_history = []
-                self.cell_history = []
+    def update_marker(self, ids):
+        # if self.current_cell is not None:
+        self.build_history()
+        if len(self.direction_history) >= self.history_length:
+            self.notify_observers()
+            self.direction_history = []
+            self.cell_history = []
 
     def build_history(self):
-        print("Building history")
+        # print("Building history")
         # If this is the first cell, set the previous cell to the current cell and return
         if self.previous_cell is None:
             print("First cell")
@@ -132,7 +129,7 @@ class CursorMarker(Marker):
             self.cell_history.pop(0)
         # Add the current direction and cell to the end of the direction history and cell history, respectively
         self.direction_history.append(direction)
-        print(direction)
+        print(self.direction_history)
         self.cell_history.append(self.current_cell)
         # Set the previous cell to the current cell
         self.previous_cell = self.current_cell
@@ -152,8 +149,7 @@ class DataMarker(Marker):
         # self.memory = {"data": self.data}
         self.data_type = data_type
 
-    def update_marker(self, corners, ids):
-        super().update_marker(corners, ids)
+    def update_marker(self, ids):
         self.notify_observers()
     
     def notify_observers(self):

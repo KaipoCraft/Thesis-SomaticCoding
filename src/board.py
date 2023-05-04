@@ -60,7 +60,7 @@ class Cell:
             marker: the marker object that has been removed from the cell
         '''
         self.is_empty = True
-        self.marker.set_current_cell(None)   # Set the marker's current cell to None
+        # self.marker.set_current_cell(None)   # Set the marker's current cell to None
         self.marker = None
         # self.notify_observers()         # Notify the observers with up to date info
 
