@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import openai
 import random
-openai.api_key = ""
+openai.api_key = "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"
 
 @abstractmethod
 class GestureBehavior(ABC):
@@ -135,6 +135,7 @@ class ResetBehavior(GestureBehavior):
     def function(self, active_data_markers_, display_):
         for marker in active_data_markers_:
             marker.data = marker.og_data
+        display_.reset_output()
 
 class GrammarTransformationBehavior(GestureBehavior):
     def __init__(self):
@@ -219,6 +220,8 @@ class AddToOutputBehavior(GestureBehavior):
     
     def function(self, active_data_markers_, display_):
         existing_string = display_.get_output()
+        if existing_string == None or existing_string.isspace() or "":
+            existing_string = "Please add markers to the board first."
         output = []
         for marker in active_data_markers_:
             output.append(marker.get_data())
@@ -232,12 +235,13 @@ class RunOutputBehavior(GestureBehavior):
     
     def function(self, active_data_markers_, display_):
         output_string = display_.get_output()
-        if output_string == None or output_string.isspace():
+        print(output_string)
+        if output_string == None or output_string.isspace() or "":
             output_string = "Please add some words to the output first."
-            display_.update_output(output_string)
+            display_.update_final_output(output_string)
         else:
-            prompt = f"Please write a short poem inspired by this prompt: {output_string}."
+            prompt = f"Please write a short poem inspired by this prompt under 40 characters: {output_string}."
             model = "text-davinci-003"
-            response = openai.Completion.create(engine=model, prompt=prompt, max_tokens=25, temperature=0.9, n=1, stop=None)
+            response = openai.Completion.create(engine=model, prompt=prompt, max_tokens=30, temperature=0.9, n=1, stop=None)
             transformed_data = response.choices[0].text.strip()
-            display_.update_output(transformed_data)
+            display_.update_final_output(transformed_data)

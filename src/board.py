@@ -93,7 +93,7 @@ class Cell:
         # alpha = 0.5
         # image_ = cv2.addWeighted(overlay, alpha, image_, 1 - alpha, 0, image_)
 
-        cv2.rectangle(image_, (int(self.x), int(self.y)), (int(self.x + self.size[0]-abs(border_thickness)), int(self.y + self.size[1]-abs(border_thickness))), (255,245,245), border_thickness)
+        # cv2.rectangle(image_, (int(self.x), int(self.y)), (int(self.x + self.size[0]-abs(border_thickness)), int(self.y + self.size[1]-abs(border_thickness))), (255,245,245), border_thickness)
         cv2.rectangle(image_, (int(self.x), int(self.y)), (int(self.x + self.size[0]-abs(border_thickness)), int(self.y + self.size[1]-abs(border_thickness))), color_, 1)
 
         # # calculate the size of the text

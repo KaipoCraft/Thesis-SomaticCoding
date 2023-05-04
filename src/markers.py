@@ -99,12 +99,12 @@ class CursorMarker(Marker):
         # print("Building history")
         # If this is the first cell, set the previous cell to the current cell and return
         if self.previous_cell is None:
-            print("First cell")
             self.previous_cell = self.current_cell
             return
         # If the current cell is the same as the previous cell, return
         if self.current_cell == self.previous_cell:
             return
+        # print("adding to history")
         # Calculate the direction of movement
         dir_x, dir_y = self.current_cell[0] - self.previous_cell[0], self.current_cell[1] - self.previous_cell[1]
         if abs(dir_x) == abs(dir_y):
@@ -129,7 +129,6 @@ class CursorMarker(Marker):
             self.cell_history.pop(0)
         # Add the current direction and cell to the end of the direction history and cell history, respectively
         self.direction_history.append(direction)
-        print(self.direction_history)
         self.cell_history.append(self.current_cell)
         # Set the previous cell to the current cell
         self.previous_cell = self.current_cell

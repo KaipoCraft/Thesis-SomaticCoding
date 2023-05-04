@@ -75,7 +75,7 @@ parameters = aruco.DetectorParameters()
 marker_size = 100
 primary_color = (145, 196, 153)
 background_color = (230, 230, 230)
-gesture_history_length = 8
+gesture_history_length = 7
 
 # import the camera matrix and distortion coefficients
 camera_matrix, dist_coeffs = calibration.calibrate.Calibrator(args.camera, args.file_name).get_matrix()

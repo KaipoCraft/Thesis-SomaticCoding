@@ -61,14 +61,19 @@ class Display(metaclass=singleton.SingletonMeta):
         self.label1.pack(side=tk.TOP, fill=tk.X, padx=10, pady=50)
 
         self.label2_text = ""
-        self.label2 = tk.Label(label_frame, text=self.label2_text, bg=self.background_color_tkinter, fg=self.primary_color_tkinter, font=("Helvetica", 30), width=int(self.screen_width*1/3-10), wraplength=self.screen_width*1/3-10)
+        self.label2 = tk.Label(label_frame, text=self.label2_text, bg=self.background_color_tkinter, fg="black", font=("Helvetica", 30), width=int(self.screen_width*1/3-10), wraplength=self.screen_width*1/3-10)
         self.label2.config(justify=tk.LEFT)
         self.label2.pack(side=tk.TOP, fill=tk.X, padx=10, pady=50)
 
         self.output_label_text = self.output_data
-        self.output_label = tk.Label(label_frame, text=self.output_label_text, bg=self.primary_color_tkinter, fg="white", font=("Helvetica", 30), wraplength=self.screen_width*1/3-10)
+        self.output_label = tk.Label(label_frame, text=self.output_label_text, bg=self.primary_color_tkinter, fg="black", font=("Helvetica", 30), wraplength=self.screen_width*1/3-10)
         self.output_label.config(justify=tk.LEFT)
         self.output_label.pack(side=tk.BOTTOM, fill=tk.X, padx=10, pady=60)
+
+        self.final_output_label_text = ""
+        self.final_output_label = tk.Label(label_frame, text=self.final_output_label_text, bg=self.primary_color_tkinter, fg="black", font=("Helvetica", 30), wraplength=self.screen_width*1/3-10)
+        self.final_output_label.config(justify=tk.LEFT)
+        self.final_output_label.pack(side=tk.BOTTOM, fill=tk.X, padx=10, pady=60)
 
     # Define the video capture loop
     def video_loop(self):
@@ -217,6 +222,17 @@ class Display(metaclass=singleton.SingletonMeta):
         # Change so it just says stuff when the "AddToOutput" function is called
         self.output_data = data_
         self.output_label.config(text=str(self.output_data))
+        self.root.update()
+
+    def update_final_output(self, data_):
+        # Change so it just says stuff when the "AddToOutput" function is called
+        self.final_output_data = data_
+        self.final_output_label.config(text=str(self.final_output_data))
+        self.root.update()
+
+    def reset_output(self):
+        self.output_data = ""
+        self.final_output_label.config(text=str(self.output_data))
         self.root.update()
 
     def sort_markers(self):
