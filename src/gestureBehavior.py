@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import openai
 import random
-openai.api_key = "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"
+openai.api_key = ""
 
 @abstractmethod
 class GestureBehavior(ABC):
@@ -245,3 +245,4 @@ class RunOutputBehavior(GestureBehavior):
             response = openai.Completion.create(engine=model, prompt=prompt, max_tokens=30, temperature=0.9, n=1, stop=None)
             transformed_data = response.choices[0].text.strip()
             display_.update_final_output(transformed_data)
+            display_.update_output("")

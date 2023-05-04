@@ -120,12 +120,12 @@ class Display(metaclass=singleton.SingletonMeta):
                     #     marker.is_visible = True
                     #     marker.update_marker(marker_id)
                     #     marker.draw_marker(frame, self.primary_color)
-                    if marker_id in ids:
-                        marker.is_visible = True
-                        marker.update_marker(marker_id)
-                        marker.draw_marker(frame, self.primary_color)
-                    else:
-                        marker.update_visibility()
+                    # if marker_id in ids:
+                    marker.is_visible = True
+                    marker.update_marker(marker_id)
+                    marker.draw_marker(frame, self.primary_color)
+                    # else:
+                        # marker.update_visibility()
 
                     # if id not in printed_ids:
                     if marker.get_data() == None:
@@ -136,6 +136,8 @@ class Display(metaclass=singleton.SingletonMeta):
                         label1_text = " ".join(visible_marker_data)
                         self.label1.config(text=label1_text)
                         # printed_ids.add(id)
+            else:
+                self.label1.config(text="No markers detected")
                     
             frame = cv2.flip(frame, 1)
             
